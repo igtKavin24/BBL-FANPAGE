@@ -1,0 +1,4111 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Big Bash League — Fan Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:wght@300;400;700&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    :root {
+      --neon: #CCFF00;
+      --navy: #003366;
+      --purple-soft: #E7C6FF;
+      --glass-bg: rgba(0, 0, 0, 0.65);
+      --glass-border: rgba(255, 255, 255, 0.15);
+      --input-bg: rgba(255, 255, 255, 0.08);
+      --input-focus: rgba(204, 255, 0, 0.15);
+      --red: #ff4d4d;
+      --bg-primary: #050a18;
+      --bg-card: rgba(0, 5, 15, 0.8);
+      --text-primary: #fff;
+      --text-secondary: rgba(255, 255, 255, 0.6);
+    }
+
+    body.light-mode {
+      --bg-primary: #eef2ff;
+      --bg-card: rgba(255, 255, 255, 0.9);
+      --glass-bg: rgba(255, 255, 255, 0.85);
+      --glass-border: rgba(0, 0, 0, 0.12);
+      --text-primary: #0a0a1a;
+      --text-secondary: rgba(0, 0, 0, 0.55);
+      --input-bg: rgba(0, 0, 0, 0.06);
+      --input-focus: rgba(0, 51, 102, 0.08);
+      --neon: #007700;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-primary);
+      overflow-x: hidden;
+      transition: background .3s, color .3s;
+    }
+
+    /* VIDEO BG — global (non-login pages) */
+    #bgVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -2;
+      opacity: 0.45;
+    }
+
+    .video-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(0, 10, 30, 0.72) 0%, rgba(0, 0, 0, 0.48) 100%);
+      z-index: -1;
+      transition: background .3s;
+    }
+
+    body.light-mode .video-overlay {
+      background: linear-gradient(135deg, rgba(220, 230, 255, 0.82) 0%, rgba(200, 220, 255, 0.75) 100%);
+    }
+
+    /* LOGIN PAGE VIDEO BG */
+    #loginVideoWrap {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    #loginBgVideo {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+    }
+
+    #loginVideoOverlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 5, 20, 0.78) 0%, rgba(0, 0, 0, 0.60) 100%);
+    }
+
+    /* NAV */
+    nav {
+      background: rgba(0, 10, 30, 0.93);
+      backdrop-filter: blur(14px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(204, 255, 0, 0.14);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    body.light-mode nav {
+      background: rgba(255, 255, 255, 0.95);
+      border-bottom: 2px solid #003366;
+    }
+
+    nav h1 {
+      color: var(--neon);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 24px;
+      letter-spacing: 3px;
+      text-shadow: 0 0 14px rgba(204, 255, 0, 0.4);
+    }
+
+    body.light-mode nav h1 {
+      color: #003366;
+      text-shadow: none;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a,
+    .nav-tab {
+      color: rgba(255, 255, 255, 0.75);
+      text-decoration: none;
+      font-weight: 700;
+      padding: 6px 13px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: 'Lato', sans-serif;
+      font-size: 13px;
+      transition: color .2s, background .2s;
+    }
+
+    body.light-mode .nav-tab {
+      color: #003366;
+    }
+
+    .nav-tab:hover {
+      color: var(--neon);
+      background: rgba(204, 255, 0, 0.1);
+    }
+
+    body.light-mode .nav-tab:hover {
+      color: #003366;
+      background: rgba(0, 51, 102, 0.1);
+    }
+
+    .nav-tab.active {
+      background: rgba(204, 255, 0, 0.15);
+      color: var(--neon);
+      border: 1px solid rgba(204, 255, 0, 0.3);
+    }
+
+    body.light-mode .nav-tab.active {
+      background: #003366;
+      color: #CCFF00;
+      border: none;
+    }
+
+    #logoutBtn {
+      display: none;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 5px 14px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-weight: 700;
+      font-family: 'Lato', sans-serif;
+      font-size: 12px;
+      transition: all .2s;
+    }
+
+    #logoutBtn:hover {
+      background: rgba(255, 77, 77, 0.15);
+      color: #ff6b6b;
+      border-color: #ff6b6b;
+    }
+
+    /* DARK/LIGHT TOGGLE */
+    #themeToggle {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 20px;
+      padding: 5px 12px;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255, 255, 255, 0.7);
+      font-family: 'Lato', sans-serif;
+      font-size: 12px;
+      transition: all .2s;
+    }
+
+    #themeToggle:hover {
+      background: rgba(204, 255, 0, 0.12);
+      border-color: rgba(204, 255, 0, 0.3);
+    }
+
+    body.light-mode #themeToggle {
+      background: rgba(0, 51, 102, 0.1);
+      border-color: #003366;
+      color: #003366;
+    }
+
+    /* PAGES */
+    .page {
+      flex: 1;
+      display: none;
+    }
+
+    .page.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── LOGIN PAGE ── */
+    #loginPage {
+      position: relative;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 16px;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .login-card {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 440px;
+      background: rgba(0, 0, 0, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 22px;
+      padding: 44px 38px 40px;
+      box-shadow: 0 8px 60px rgba(0, 0, 0, 0.8);
+      animation: fadeUp .6s ease both;
+      backdrop-filter: blur(18px);
+    }
+
+    @media(max-width:480px) {
+      .login-card {
+        padding: 28px 18px 24px;
+        border-radius: 16px;
+      }
+    }
+
+    .card-logo {
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .card-logo span {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 40px;
+      color: #CCFF00;
+      letter-spacing: 4px;
+      text-shadow: 0 0 18px rgba(204, 255, 0, .5);
+    }
+
+    .card-subtitle {
+      text-align: center;
+      color: #E7C6FF;
+      font-size: 13px;
+      font-weight: 300;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 30px;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .divider span {
+      color: rgba(231, 198, 255, .5);
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      color: #E7C6FF;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 7px;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-wrapper>svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      stroke: rgba(231, 198, 255, .45);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      pointer-events: none;
+      transition: stroke .25s;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      padding: 12px 14px 12px 42px;
+      color: #fff;
+      font-family: 'Lato', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color .25s, background .25s, box-shadow .25s;
+    }
+
+    input::placeholder {
+      color: rgba(255, 255, 255, .22);
+    }
+
+    input:focus {
+      border-color: #CCFF00;
+      background: rgba(204, 255, 0, 0.08);
+      box-shadow: 0 0 0 3px rgba(204, 255, 0, .1);
+    }
+
+    input.input-error {
+      border-color: #ff4d4d !important;
+      box-shadow: 0 0 0 3px rgba(255, 77, 77, .12) !important;
+    }
+
+    .input-wrapper:focus-within>svg {
+      stroke: #CCFF00;
+    }
+
+    .toggle-eye {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      line-height: 0;
+    }
+
+    .toggle-eye svg {
+      width: 17px;
+      height: 17px;
+      stroke: rgba(231, 198, 255, .4);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: stroke .2s;
+    }
+
+    .toggle-eye:hover svg {
+      stroke: #CCFF00;
+    }
+
+    .password-input {
+      padding-right: 40px !important;
+    }
+
+    .options-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+
+    .remember-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: rgba(231, 198, 255, .7);
+      font-size: 13px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .remember-label input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      accent-color: #CCFF00;
+      cursor: pointer;
+    }
+
+    .forgot-link {
+      color: #CCFF00;
+      font-size: 13px;
+      text-decoration: none;
+    }
+
+    .forgot-link:hover {
+      text-decoration: underline;
+    }
+
+    .btn-login {
+      width: 100%;
+      background: #CCFF00;
+      color: #000;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 3px;
+      padding: 13px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s;
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(204, 255, 0, .4);
+    }
+
+    .register-row {
+      text-align: center;
+      color: rgba(231, 198, 255, .5);
+      font-size: 13px;
+      margin-top: 20px;
+    }
+
+    .register-row a {
+      color: #CCFF00;
+      text-decoration: none;
+    }
+
+    .register-row a:hover {
+      text-decoration: underline;
+    }
+
+    .error-msg {
+      display: none;
+      color: var(--red);
+      background: rgba(255, 77, 77, .1);
+      border: 1px solid rgba(255, 77, 77, .3);
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .error-msg.visible {
+      display: block;
+      animation: shake .35s ease;
+    }
+
+    .strength-bar {
+      margin-top: 7px;
+      height: 4px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, .1);
+      overflow: hidden;
+    }
+
+    .strength-fill {
+      height: 100%;
+      width: 0%;
+      transition: width .3s, background .3s;
+      border-radius: 4px;
+    }
+
+    .strength-label {
+      font-size: 11px;
+      color: rgba(231, 198, 255, .5);
+      margin-top: 4px;
+    }
+
+    /* SUCCESS OVERLAY */
+    .success-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .78);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .4s;
+    }
+
+    .success-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .success-box {
+      background: rgba(0, 30, 60, .95);
+      border: 1px solid #CCFF00;
+      border-radius: 20px;
+      padding: 44px 48px;
+      text-align: center;
+      animation: fadeUp .5s ease;
+      backdrop-filter: blur(20px);
+    }
+
+    .tick {
+      font-size: 56px;
+      margin-bottom: 14px;
+    }
+
+    .success-box h2 {
+      color: #CCFF00;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 30px;
+      letter-spacing: 3px;
+      margin-bottom: 8px;
+    }
+
+    .success-box p {
+      color: rgba(255, 255, 255, .7);
+      font-size: 15px;
+    }
+
+    /* ── FAN PAGE ── */
+    #fanPage {
+      padding: 0 0 60px;
+    }
+
+    .intro-section {
+      background: rgba(0, 0, 0, .5);
+      padding: 70px 40px;
+      text-align: center;
+      border-bottom: 1px solid rgba(204, 255, 0, 0.1);
+    }
+
+    body.light-mode .intro-section {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .main-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(40px, 6vw, 80px);
+      color: var(--neon);
+      letter-spacing: 8px;
+      text-shadow: 0 0 40px rgba(204, 255, 0, .5);
+      margin-bottom: 20px;
+    }
+
+    .intro-text {
+      max-width: 760px;
+      margin: 0 auto;
+      color: var(--text-secondary);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .teams-section {
+      padding: 50px 30px;
+    }
+
+    .teams-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 36px;
+      color: var(--text-primary);
+      letter-spacing: 3px;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .teams-subtitle {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+
+    .teams-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .team-card {
+      background: var(--bg-card);
+      border: 2px solid rgba(255, 255, 255, .09);
+      border-radius: 16px;
+      padding: 22px 18px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform .25s, box-shadow .25s, border-color .25s;
+      backdrop-filter: blur(8px);
+    }
+
+    .team-card:hover {
+      transform: translateY(-8px);
+    }
+
+    .team-card img {
+      width: 96px;
+      height: 96px;
+      object-fit: contain;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+    }
+
+    .team-card p {
+      color: var(--text-primary);
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .click-hint {
+      font-size: 9px;
+      color: rgba(255, 255, 255, 0.2);
+      margin-top: 8px;
+      letter-spacing: 1px;
+    }
+
+    body.light-mode .click-hint {
+      color: rgba(0, 0, 0, 0.25);
+    }
+
+    /* ── TEAM MODAL ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.87);
+      z-index: 300;
+      display: none;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 36px 16px;
+      overflow-y: auto;
+      backdrop-filter: blur(6px);
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .team-modal {
+      background: rgba(5, 10, 25, 0.98);
+      border-radius: 22px;
+      width: 100%;
+      max-width: 840px;
+      overflow: hidden;
+      animation: fadeUp .4s ease;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-header {
+      padding: 28px 32px 24px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .modal-header img {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+    }
+
+    .modal-header-text h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 34px;
+      letter-spacing: 3px;
+      margin-bottom: 3px;
+    }
+
+    .modal-header-text p {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.45);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .modal-close {
+      margin-left: auto;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 18px;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 77, 77, 0.2);
+      color: #ff6b6b;
+      border-color: #ff6b6b;
+    }
+
+    .modal-body {
+      padding: 26px 32px 32px;
+    }
+
+    .modal-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .modal-stat-box {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .modal-stat-box .stat-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 26px;
+    }
+
+    .modal-stat-box .stat-lbl {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.35);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 3px;
+    }
+
+    .modal-section {
+      margin-bottom: 22px;
+    }
+
+    .modal-section h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 19px;
+      letter-spacing: 2px;
+      color: rgba(255, 255, 255, 0.65);
+      margin-bottom: 12px;
+      padding-bottom: 7px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .modal-player-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .modal-player-row:last-child {
+      border-bottom: none;
+    }
+
+    .modal-player-rank {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.18);
+      min-width: 24px;
+    }
+
+    .modal-player-info {
+      flex: 1;
+    }
+
+    .modal-player-info .name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .modal-player-info .role {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.38);
+    }
+
+    .modal-player-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+    }
+
+    .squad-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 8px;
+    }
+
+    .squad-player {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 9px;
+      padding: 9px;
+      text-align: center;
+    }
+
+    .squad-player .pl-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+
+    .squad-player .pl-role {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.38);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .honor-tag {
+      display: inline-block;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin: 3px;
+    }
+
+    .venue-info {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.7;
+    }
+
+    /* ── SCHEDULE PAGE ── */
+    #schedulePage {
+      padding: 40px 20px 60px;
+    }
+
+    .page-heading {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 42px;
+      color: var(--neon);
+      letter-spacing: 4px;
+      text-align: center;
+      margin-bottom: 6px;
+      text-shadow: 0 0 20px rgba(204, 255, 0, 0.25);
+    }
+
+    body.light-mode .page-heading {
+      text-shadow: none;
+      color: #003366;
+    }
+
+    .page-sub {
+      text-align: center;
+      color: var(--text-secondary);
+      margin-bottom: 28px;
+      font-size: 13px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+
+    .filter-btn {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: rgba(255, 255, 255, 0.65);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+      font-family: 'Lato', sans-serif;
+      letter-spacing: 0.5px;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: var(--neon);
+      color: #000;
+      border-color: var(--neon);
+    }
+
+    body.light-mode .filter-btn {
+      background: rgba(0, 51, 102, 0.08);
+      border-color: #003366;
+      color: #003366;
+    }
+
+    body.light-mode .filter-btn:hover,
+    body.light-mode .filter-btn.active {
+      background: #003366;
+      color: #CCFF00;
+      border-color: #003366;
+    }
+
+    .schedule-table-wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(0, 5, 15, .72);
+      border-radius: 14px;
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+
+    body.light-mode table {
+      background: rgba(255, 255, 255, 0.88);
+    }
+
+    thead {
+      background: rgba(0, 30, 70, .92);
+    }
+
+    body.light-mode thead {
+      background: #003366;
+    }
+
+    th {
+      color: var(--neon);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 14px;
+      letter-spacing: 2px;
+      padding: 14px 16px;
+      text-align: left;
+    }
+
+    body.light-mode th {
+      color: #CCFF00;
+    }
+
+    td {
+      color: var(--text-primary);
+      padding: 12px 16px;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255, 255, 255, .04);
+    }
+
+    body.light-mode td {
+      border-bottom: 1px solid rgba(0, 0, 0, .06);
+    }
+
+    tbody tr {
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+    tbody tr:hover td {
+      background: rgba(204, 255, 0, .04);
+    }
+
+    body.light-mode tbody tr:hover td {
+      background: rgba(0, 51, 102, 0.05);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .badge-upcoming {
+      background: rgba(204, 255, 0, .12);
+      color: var(--neon);
+      border: 1px solid rgba(204, 255, 0, 0.28);
+    }
+
+    .badge-live {
+      background: rgba(255, 77, 77, .18);
+      color: #ff6b6b;
+      border: 1px solid rgba(255, 100, 100, 0.28);
+      animation: pulse 1.5s infinite;
+    }
+
+    .badge-done {
+      background: rgba(255, 255, 255, .07);
+      color: rgba(255, 255, 255, .4);
+    }
+
+    body.light-mode .badge-done {
+      background: rgba(0, 0, 0, .07);
+      color: rgba(0, 0, 0, .4);
+    }
+
+    .team-name-colored {
+      font-weight: 700;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .4
+      }
+    }
+
+    /* ── MATCH MODAL ── */
+    .match-modal {
+      background: rgba(5, 10, 25, 0.98);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 720px;
+      animation: fadeUp .35s ease;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+      max-height: 88vh;
+      overflow-y: auto;
+    }
+
+    .match-modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: rgba(5, 10, 25, 0.98);
+      z-index: 2;
+    }
+
+    .match-modal-header h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 2px;
+      color: #fff;
+    }
+
+    .match-modal-body {
+      padding: 24px;
+    }
+
+    .score-display {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      margin-bottom: 22px;
+    }
+
+    .score-team {
+      text-align: center;
+    }
+
+    .score-team .tm-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 2px;
+      margin-bottom: 5px;
+    }
+
+    .score-team .tm-score {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 40px;
+      letter-spacing: 2px;
+    }
+
+    .score-team .tm-overs {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.38);
+      margin-top: 3px;
+    }
+
+    .score-divider {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 26px;
+      color: rgba(255, 255, 255, 0.13);
+    }
+
+    .live-stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .live-stat {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 9px;
+      padding: 11px;
+      text-align: center;
+    }
+
+    .live-stat .val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+    }
+
+    .live-stat .lbl {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.38);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 3px;
+    }
+
+    .result-banner {
+      text-align: center;
+      padding: 14px;
+      border-radius: 11px;
+      margin-bottom: 18px;
+    }
+
+    .result-banner h4 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 2px;
+    }
+
+    .result-banner p {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.55);
+      margin-top: 4px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .detail-box {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .detail-box h5 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 15px;
+      letter-spacing: 1.5px;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 10px;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      padding: 4px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-row .dl {
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    .detail-row .dv {
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .prob-bar-wrap {
+      margin-bottom: 14px;
+    }
+
+    .prob-label-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .prob-bar {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .prob-fill {
+      height: 100%;
+      border-radius: 8px;
+      transition: width 1s ease;
+    }
+
+    .squad-section {
+      margin-top: 18px;
+    }
+
+    .squad-section h4 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 16px;
+      letter-spacing: 1.5px;
+      margin-bottom: 10px;
+    }
+
+    .squad-category {
+      margin-bottom: 12px;
+    }
+
+    .squad-category-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.35);
+      margin-bottom: 6px;
+    }
+
+    .squad-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .squad-pill {
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    /* ── STATS PAGE ── */
+    #statsPage {
+      padding: 40px 20px 60px;
+    }
+
+    .points-table-wrap {
+      max-width: 960px;
+      margin: 0 auto 44px;
+    }
+
+    .points-table-wrap h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 3px;
+      text-align: center;
+      color: var(--neon);
+      margin-bottom: 16px;
+    }
+
+    .pt-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(0, 5, 15, .75);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    body.light-mode .pt-table {
+      background: rgba(255, 255, 255, 0.88);
+    }
+
+    .pt-table thead {
+      background: rgba(0, 30, 70, .9);
+    }
+
+    body.light-mode .pt-table thead {
+      background: #003366;
+    }
+
+    .pt-table th {
+      color: var(--neon);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      padding: 12px 14px;
+      text-align: center;
+    }
+
+    .pt-table th:first-child {
+      text-align: left;
+    }
+
+    .pt-table td {
+      padding: 11px 14px;
+      font-size: 13px;
+      color: var(--text-primary);
+      border-bottom: 1px solid rgba(255, 255, 255, .05);
+      text-align: center;
+    }
+
+    body.light-mode .pt-table td {
+      border-bottom: 1px solid rgba(0, 0, 0, .06);
+    }
+
+    .pt-table td:first-child {
+      text-align: left;
+    }
+
+    .pt-table tr:hover td {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .pt-team-name {
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pt-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* PLAYER STAT CLICK MODAL */
+    .player-blast-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 600;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .player-blast-overlay.open {
+      display: flex;
+    }
+
+    .player-blast-card {
+      background: rgba(5, 10, 25, 0.98);
+      border-radius: 22px;
+      width: 100%;
+      max-width: 520px;
+      overflow: hidden;
+      animation: blastIn .5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border: 2px solid #CCFF00;
+      box-shadow: 0 0 80px rgba(204, 255, 0, 0.35), 0 20px 60px rgba(0, 0, 0, 0.8);
+      position: relative;
+    }
+
+    @keyframes blastIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.3) rotate(-10deg)
+      }
+
+      60% {
+        transform: scale(1.06) rotate(2deg)
+      }
+
+      100% {
+        transform: scale(1) rotate(0)
+      }
+    }
+
+    .blast-particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .blast-particle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      animation: particleFly 1s ease-out forwards;
+    }
+
+    @keyframes particleFly {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1)
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(var(--dx), var(--dy)) scale(0)
+      }
+    }
+
+    .player-blast-header {
+      padding: 24px 24px 18px;
+      text-align: center;
+      position: relative;
+    }
+
+    .player-real-photo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: top;
+      border: 4px solid;
+      margin: 0 auto 12px;
+      display: block;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .player-blast-header h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 30px;
+      letter-spacing: 3px;
+    }
+
+    .player-blast-header p {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .player-blast-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 0 24px 24px;
+    }
+
+    .pb-stat {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .pb-stat .pv {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 26px;
+      letter-spacing: 1px;
+    }
+
+    .pb-stat .pl {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.38);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 3px;
+    }
+
+    .blast-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.5);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    .blast-close:hover {
+      background: rgba(255, 77, 77, 0.2);
+      color: #ff6b6b;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto 50px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, .07);
+      border-radius: 16px;
+      padding: 24px;
+      transition: border-color .2s, box-shadow .2s;
+      backdrop-filter: blur(8px);
+    }
+
+    body.light-mode .stat-card {
+      border-color: rgba(0, 0, 0, .1);
+    }
+
+    .stat-card:hover {
+      border-color: var(--neon);
+      box-shadow: 0 6px 28px rgba(204, 255, 0, .1);
+    }
+
+    .stat-card h3 {
+      color: var(--neon);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 2px;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, .06);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    body.light-mode .stat-card h3 {
+      color: #003366;
+      border-bottom-color: rgba(0, 0, 0, .08);
+    }
+
+    .player-row {
+      display: flex;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, .04);
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background .15s;
+      padding-left: 4px;
+      padding-right: 4px;
+    }
+
+    .player-row:hover {
+      background: rgba(204, 255, 0, 0.05);
+    }
+
+    body.light-mode .player-row:hover {
+      background: rgba(0, 51, 102, 0.06);
+    }
+
+    .player-row:last-child {
+      border-bottom: none;
+    }
+
+    .player-rank {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      color: rgba(255, 255, 255, 0.14);
+      min-width: 28px;
+    }
+
+    body.light-mode .player-rank {
+      color: rgba(0, 0, 0, 0.2);
+    }
+
+    .player-face {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: top;
+      margin-right: 10px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+    }
+
+    .player-info {
+      flex: 1;
+    }
+
+    .player-name {
+      color: var(--text-primary);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: underline dotted rgba(204, 255, 0, 0.5);
+      transition: color .2s;
+    }
+
+    .player-name:hover {
+      color: var(--neon);
+    }
+
+    .player-team {
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    .player-stat {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 24px;
+      letter-spacing: 1px;
+    }
+
+    /* ── FAN ZONE ── */
+    #fanzonePage {
+      padding: 40px 20px 60px;
+    }
+
+    .fanzone-hero {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .fanzone-hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(36px, 5vw, 64px);
+      letter-spacing: 5px;
+      color: var(--neon);
+      text-shadow: 0 0 30px rgba(204, 255, 0, 0.4);
+    }
+
+    .fanzone-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    @media(max-width:680px) {
+      .fanzone-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .fanzone-card {
+      background: var(--bg-card);
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(8px);
+    }
+
+    body.light-mode .fanzone-card {
+      border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .fanzone-card-header {
+      padding: 18px 22px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .fanzone-card-body {
+      padding: 16px 22px 22px;
+    }
+
+    /* POLL */
+    .poll-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .poll-option {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 11px 14px;
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    body.light-mode .poll-option {
+      background: rgba(0, 51, 102, 0.06);
+      border-color: rgba(0, 51, 102, 0.15);
+    }
+
+    .poll-option:hover {
+      border-color: var(--neon);
+      transform: translateX(4px);
+    }
+
+    .poll-option.voted {
+      cursor: default;
+      transform: none;
+    }
+
+    .poll-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      transition: width .8s ease;
+      opacity: 0.18;
+      border-radius: 10px;
+    }
+
+    .poll-label {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--text-primary);
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .poll-pct {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .poll-count {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .poll-reset {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.4);
+      border-radius: 8px;
+      padding: 5px 12px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .poll-reset:hover {
+      border-color: var(--neon);
+      color: var(--neon);
+    }
+
+    body.light-mode .poll-reset {
+      border-color: rgba(0, 51, 102, 0.2);
+      color: rgba(0, 51, 102, 0.5);
+    }
+
+    /* LEADERBOARD */
+    .lb-form {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .lb-form input {
+      flex: 1;
+      min-width: 120px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 9px;
+      padding: 9px 12px;
+      color: #fff;
+      font-family: 'Lato', sans-serif;
+      font-size: 13px;
+      outline: none;
+    }
+
+    body.light-mode .lb-form input {
+      background: rgba(0, 0, 0, 0.05);
+      border-color: rgba(0, 51, 102, 0.2);
+      color: #000;
+    }
+
+    .lb-form input:focus {
+      border-color: var(--neon);
+    }
+
+    .lb-form select {
+      background: rgba(0, 10, 30, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 9px;
+      padding: 9px 12px;
+      color: #fff;
+      font-family: 'Lato', sans-serif;
+      font-size: 12px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    body.light-mode .lb-form select {
+      background: #fff;
+      color: #000;
+      border-color: rgba(0, 51, 102, 0.2);
+    }
+
+    .lb-form select:focus {
+      border-color: var(--neon);
+    }
+
+    .lb-submit {
+      background: var(--neon);
+      color: #000;
+      border: none;
+      border-radius: 9px;
+      padding: 9px 16px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: transform .15s;
+    }
+
+    .lb-submit:hover {
+      transform: scale(1.04);
+    }
+
+    .lb-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .lb-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 10px 14px;
+    }
+
+    body.light-mode .lb-row {
+      background: rgba(0, 51, 102, 0.07);
+    }
+
+    .lb-position {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      min-width: 28px;
+      color: rgba(255, 255, 255, 0.2);
+    }
+
+    body.light-mode .lb-position {
+      color: rgba(0, 0, 0, 0.25);
+    }
+
+    .lb-name {
+      flex: 1;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+
+    .lb-pick {
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 6px;
+      padding: 2px 8px;
+    }
+
+    .lb-pts {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+    }
+
+    .lb-gold {
+      color: #FFD700;
+    }
+
+    .lb-silver {
+      color: #C0C0C0;
+    }
+
+    .lb-bronze {
+      color: #CD7F32;
+    }
+
+    /* YOUTUBE HIGHLIGHTS */
+    .yt-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media(max-width:520px) {
+      .yt-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .yt-thumb {
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      aspect-ratio: 16/9;
+      background: #000;
+    }
+
+    .yt-thumb iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .yt-thumb-cover {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .yt-thumb-cover::after {
+      content: '▶';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.38);
+      transition: background .2s, font-size .2s;
+    }
+
+    .yt-thumb-cover:hover::after {
+      background: rgba(220, 0, 0, 0.65);
+      font-size: 44px;
+    }
+
+    .yt-title {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 6px;
+      text-align: center;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(28px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0)
+      }
+
+      25% {
+        transform: translateX(-6px)
+      }
+
+      75% {
+        transform: translateX(6px)
+      }
+    }
+
+    /* RESPONSIVE */
+    @media(max-width:768px) {
+      nav {
+        padding: 10px 14px;
+        gap: 6px;
+      }
+
+      nav h1 {
+        font-size: 17px;
+        letter-spacing: 2px;
+      }
+
+      .nav-links {
+        gap: 2px;
+      }
+
+      .nav-tab {
+        padding: 5px 9px;
+        font-size: 11px;
+      }
+
+      #themeToggle {
+        padding: 4px 9px;
+        font-size: 11px;
+      }
+
+      #logoutBtn {
+        padding: 4px 10px;
+        font-size: 11px;
+      }
+
+      .intro-section {
+        padding: 50px 20px;
+      }
+
+      .teams-section {
+        padding: 32px 14px;
+      }
+
+      .teams-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 14px;
+      }
+
+      .team-card img {
+        width: 72px;
+        height: 72px;
+      }
+
+      #schedulePage,
+      #statsPage,
+      #fanzonePage {
+        padding: 28px 14px 50px;
+      }
+
+      .schedule-table-wrap {
+        overflow-x: auto;
+      }
+
+      th,
+      td {
+        padding: 10px 10px;
+        font-size: 12px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .points-table-wrap {
+        padding: 0 2px;
+      }
+    }
+
+    @media(max-width:600px) {
+      .modal-stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-body {
+        padding: 16px 14px 20px;
+      }
+
+      .modal-header {
+        padding: 18px 16px;
+      }
+
+      .match-modal-body {
+        padding: 16px;
+      }
+
+      .score-team .tm-score {
+        font-size: 30px;
+      }
+
+      .fanzone-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .yt-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .page-heading {
+        font-size: 30px;
+      }
+
+      /* Login page mobile */
+      .card-logo span {
+        font-size: 28px;
+      }
+
+      .btn-login {
+        font-size: 17px;
+        padding: 12px;
+      }
+
+      label {
+        font-size: 10px;
+      }
+    }
+
+    @media(max-width:380px) {
+      .teams-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      nav h1 {
+        font-size: 14px;
+      }
+
+      .nav-tab {
+        padding: 4px 7px;
+        font-size: 10px;
+      }
+    }
+
+    /* FLOATING CART BUBBLE */
+    #floatingCart {
+      position: fixed;
+      bottom: 28px;
+      right: 24px;
+      background: #CCFF00;
+      color: #000;
+      border: none;
+      border-radius: 50px;
+      padding: 12px 20px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      z-index: 200;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 6px 28px rgba(204, 255, 0, .45);
+      transition: transform .2s, box-shadow .2s;
+      animation: fadeUp .4s ease;
+    }
+
+    #floatingCart:hover {
+      transform: translateY(-3px) scale(1.04);
+      box-shadow: 0 10px 36px rgba(204, 255, 0, .55);
+    }
+
+    #floatingCart .fc-badge {
+      background: #000;
+      color: #CCFF00;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Lato', sans-serif;
+      font-weight: 700;
+    }
+
+    /* MERCH RESPONSIVE */
+    @media(max-width:600px) {
+      #productsGrid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+      }
+    }
+
+    @media(max-width:380px) {
+      #productsGrid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+    /* FANZONE GRID FULL WIDTH OVERRIDE */
+    @media(max-width:680px) {
+      .fanzone-card[style*="grid-column"] {
+        grid-column: 1 / -1 !important;
+      }
+    }
+
+    /* BILL PRINT STYLES */
+    @media print {
+      body>*:not(#billModal) {
+        display: none !important;
+      }
+
+      #billModal {
+        display: block !important;
+        position: static !important;
+        background: #fff !important;
+        padding: 0 !important;
+      }
+
+      #billModal>div {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+      }
+
+      #billModal>div>div:last-child {
+        display: none !important;
+      }
+    }
+
+    .react-btn {
+      background: rgba(255, 255, 255, .06);
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 10px;
+      padding: 10px 6px 6px;
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: #fff;
+      font-size: 22px;
+    }
+
+    .react-btn span {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: rgba(255, 255, 255, .5);
+    }
+
+    .react-btn:hover {
+      background: rgba(204, 255, 0, .12);
+      border-color: rgba(204, 255, 0, .3);
+      transform: scale(1.08);
+    }
+  </style>
+</head>
+
+<body>
+
+  <video id="bgVideo" autoplay muted loop playsinline style="display:none">
+    <source src="https://www.bigbash.com.au/globalassets/bbl/2024/bbl14/hero/bbl14-hero-video.mp4" type="video/mp4">
+  </video>
+  <div class="video-overlay"></div>
+
+  <nav>
+    <h1>BIG BASH LEAGUE</h1>
+    <div class="nav-links">
+      <button class="nav-tab" id="tabHome" onclick="switchTab('home')" style="display:none">Home</button>
+      <button class="nav-tab" id="tabSchedule" onclick="switchTab('schedule')" style="display:none">Schedule</button>
+      <button class="nav-tab" id="tabStats" onclick="switchTab('stats')" style="display:none">Stats</button>
+      <button class="nav-tab" id="tabFanzone" onclick="switchTab('fanzone')" style="display:none">⭐ Fan Zone</button>
+      <button class="nav-tab" id="tabMerchant" onclick="switchTab('merchant')" style="display:none">🛒 Merch</button>
+      <button id="themeToggle" onclick="toggleTheme()">🌙 Dark</button>
+      <button id="logoutBtn" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <!-- FLOATING CART BUTTON (shows on merchant page) -->
+  <button id="floatingCart" onclick="document.getElementById('cartPanel').scrollIntoView({behavior:'smooth'})">
+    🛍️ Cart <span class="fc-badge" id="fcBadge">0</span>
+  </button>
+
+  <!-- SUCCESS OVERLAY -->
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-box" style="position:relative;overflow:hidden;min-width:320px;">
+      <!-- Particle canvas -->
+      <canvas id="successCanvas" style="position:absolute;inset:0;pointer-events:none;width:100%;height:100%;"></canvas>
+      <!-- Cricket ball spinning animation -->
+      <div id="cricketBallWrap" style="margin-bottom:18px;display:flex;justify-content:center;align-items:center;">
+        <svg id="spinBall" viewBox="0 0 80 80" width="80" height="80"
+          style="animation:spinBall 1s linear infinite;filter:drop-shadow(0 0 18px rgba(204,255,0,0.55));">
+          <circle cx="40" cy="40" r="36" fill="#CC2200" stroke="#8B1500" stroke-width="2" />
+          <!-- seam lines -->
+          <path d="M40 4 Q55 20 55 40 Q55 60 40 76" fill="none" stroke="#fff" stroke-width="2.5"
+            stroke-linecap="round" />
+          <path d="M40 4 Q25 20 25 40 Q25 60 40 76" fill="none" stroke="#fff" stroke-width="2.5"
+            stroke-linecap="round" />
+          <path d="M4 40 Q20 25 40 25 Q60 25 76 40" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"
+            opacity="0.5" />
+          <path d="M4 40 Q20 55 40 55 Q60 55 76 40" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"
+            opacity="0.5" />
+          <!-- shine -->
+          <ellipse cx="28" cy="26" rx="8" ry="5" fill="rgba(255,255,255,0.18)" transform="rotate(-30 28 26)" />
+        </svg>
+      </div>
+      <div id="successBadge"
+        style="display:inline-block;background:#CCFF00;color:#000;border-radius:20px;padding:4px 18px;font-weight:700;font-size:13px;letter-spacing:1px;margin-bottom:10px;animation:popIn .4s .3s both;">
+        ✓ AUTHENTICATED</div>
+      <h2 style="position:relative;z-index:1;">Welcome Back!</h2>
+      <p id="welcomeMsg" style="position:relative;z-index:1;">Loading…</p>
+    </div>
+  </div>
+  <style>
+    @keyframes spinBall {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes popIn {
+      from {
+        transform: scale(0.4);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+  </style>
+  <script>
+    // Particle burst on success overlay show
+    function runSuccessParticles() {
+      const canvas = document.getElementById('successCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
+      const particles = Array.from({ length: 38 }, () => ({
+        x: canvas.width / 2, y: canvas.height / 2,
+        vx: (Math.random() - 0.5) * 6, vy: (Math.random() - 2) * 5,
+        size: Math.random() * 6 + 3,
+        color: ['#CCFF00', '#fff', '#ff4444', '#ffcc00'][Math.floor(Math.random() * 4)],
+        life: 1
+      }));
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          p.x += p.vx; p.y += p.vy; p.vy += 0.18; p.life -= 0.022;
+          if (p.life <= 0) return;
+          ctx.globalAlpha = p.life;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+        if (particles.some(p => p.life > 0)) requestAnimationFrame(draw);
+      }
+      draw();
+    }
+  </script>
+
+  <!-- TEAM MODAL -->
+  <div class="modal-overlay" id="teamModal" onclick="closeTeamModal(event)">
+    <div class="team-modal" id="teamModalContent"></div>
+  </div>
+
+  <!-- MATCH MODAL -->
+  <div class="modal-overlay" id="matchModal" onclick="closeMatchModal(event)">
+    <div class="match-modal" id="matchModalContent"></div>
+  </div>
+
+  <!-- PLAYER BLAST MODAL -->
+  <div class="player-blast-overlay" id="playerBlast" onclick="closePlayerBlast(event)">
+    <div class="player-blast-card" id="playerBlastCard">
+      <button class="blast-close" onclick="closePlayerBlast()">✕</button>
+      <div class="blast-particles" id="blastParticles"></div>
+      <div id="playerBlastContent"></div>
+    </div>
+  </div>
+
+  <!-- ═══ LOGIN PAGE ═══ -->
+  <div class="page active" id="loginPage" style="display:flex;">
+    <!-- Video background for login page -->
+    <div id="loginVideoWrap">
+      <video id="loginBgVideo" autoplay muted loop playsinline>
+        <source src="bbl_video.mp4" type="video/mp4">
+      </video>
+      <div id="loginVideoOverlay"></div>
+    </div>
+    <div class="login-card">
+      <div class="card-logo"><span>BIG BASH LEAGUE</span></div>
+      <p class="card-subtitle">Fan Portal — Sign In</p>
+      <div class="divider"><span>Welcome Back</span></div>
+      <div class="error-msg" id="errorMsg"></div>
+
+      <!-- REGISTER -->
+      <div id="registerSection">
+        <p style="color:rgba(255,255,255,.5);font-size:12px;margin-bottom:16px;text-align:center;">Create your unique
+          fan account using your Gmail address.</p>
+        <div class="form-group">
+          <label for="regUsername">Username</label>
+          <div class="input-wrapper">
+            <svg viewBox="0 0 24 24">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            <input type="text" id="regUsername" placeholder="Choose a username" autocomplete="off">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="regEmail">Gmail Address</label>
+          <div class="input-wrapper">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+              <polyline points="22,6 12,13 2,6" />
+            </svg>
+            <input type="email" id="regEmail" placeholder="yourname@gmail.com" autocomplete="off">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="regPass">Password</label>
+          <div class="input-wrapper">
+            <svg viewBox="0 0 24 24">
+              <rect x="5" y="11" width="14" height="10" rx="2" />
+              <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+            </svg>
+            <input type="password" id="regPass" class="password-input" placeholder="Min 8 characters"
+              oninput="checkStrength(this.value)">
+            <button class="toggle-eye" type="button" onclick="toggleEye('regPass',this)">
+              <svg viewBox="0 0 24 24">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </button>
+          </div>
+          <div class="strength-bar">
+            <div class="strength-fill" id="strengthFill"></div>
+          </div>
+          <div class="strength-label" id="strengthLabel">Enter a password</div>
+        </div>
+        <div class="form-group">
+          <label for="regPassConfirm">Confirm Password</label>
+          <div class="input-wrapper">
+            <svg viewBox="0 0 24 24">
+              <rect x="5" y="11" width="14" height="10" rx="2" />
+              <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+            </svg>
+            <input type="password" id="regPassConfirm" class="password-input" placeholder="Re-enter password">
+          </div>
+        </div>
+        <button class="btn-login" type="button" onclick="register()">CREATE ACCOUNT</button>
+        <p class="register-row" style="margin-top:14px;">Already have an account? <a href="#" onclick="showLogin()">Sign
+            in</a></p>
+      </div>
+
+      <!-- LOGIN -->
+      <div id="loginSection" style="display:none;">
+        <div class="form-group">
+          <label for="loginEmail">Gmail Address</label>
+          <div class="input-wrapper">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+              <polyline points="22,6 12,13 2,6" />
+            </svg>
+            <input type="email" id="loginEmail" placeholder="yourname@gmail.com" autocomplete="email">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-wrapper">
+            <svg viewBox="0 0 24 24">
+              <rect x="5" y="11" width="14" height="10" rx="2" />
+              <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+            </svg>
+            <input type="password" id="password" class="password-input" placeholder="Enter your password"
+              autocomplete="current-password">
+            <button class="toggle-eye" type="button" onclick="toggleEye('password',this)">
+              <svg viewBox="0 0 24 24">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </button>
+          </div>
+          <p style="font-size:11px;color:rgba(255,100,100,.7);margin-top:5px;" id="attemptsLeft"></p>
+        </div>
+        <div class="options-row">
+          <label class="remember-label"><input type="checkbox" id="remember"> Remember me</label>
+          <a href="#" class="forgot-link" onclick="forgotPassword()">Forgot password?</a>
+        </div>
+        <button class="btn-login" type="button" onclick="doLogin()">SIGN IN</button>
+        <p class="register-row">New here? <a href="#" onclick="showRegister()">Create an account</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ HOME PAGE ═══ -->
+  <div class="page" id="fanPage">
+    <div class="intro-section" style="
+      background-image: url('bbl-logo.webp');
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      position: relative;
+      overflow: hidden;
+    ">
+      <div
+        style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,0.72) 0%,rgba(0,10,30,0.65) 100%);z-index:0;">
+      </div>
+      <div style="position:relative;z-index:1;">
+        <p class="main-title">BIG BASH LEAGUE</p>
+        <p class="intro-text">Australia's premier T20 cricket competition, established by Cricket Australia in 2011.
+          Lightning-fast action, global stars, and electric atmosphere — this is BBL.</p>
+      </div>
+    </div>
+    <div class="teams-section">
+      <h2 class="teams-title">THE 8 FRANCHISES</h2>
+      <p class="teams-subtitle">Click any team to view full details</p>
+      <div class="teams-grid">
+        <div class="team-card" onclick="openTeamModal('strikers')" style="--tc:#00AEEF;border-color:#00AEEF;"><img
+            src="https://www.crickettoday.com/wp-content/uploads/2023/11/adeladiestrikers.webp" alt="Adelaide Strikers">
+          <p style="color:#00AEEF;">Adelaide Strikers</p>
+          <div class="click-hint">TAP FOR DETAILS</div>
+        </div>
+        <div class="team-card" onclick="openTeamModal('heat')" style="--tc:#00A4A7;border-color:#00A4A7;"><img
+            src="https://tse2.mm.bing.net/th/id/OIP.KRDxQuRT5xQW6emc16k5CAHaEY?cb=defcache2&rs=1&pid=ImgDetMain"
+            alt="Brisbane Heat">
+          <p style="color:#00A4A7;">Brisbane Heat</p>
+          <div class="click-hint">TAP FOR DETAILS</div>
+        </div>
+        <div class="team-card" onclick="openTeamModal('hurricanes')" style="--tc:#6A2E89;border-color:#6A2E89;"><img
+            src="https://tse1.mm.bing.net/th/id/OIP.fWOpc-9atRy5nQVTGUm6CgHaHa?cb=defcache2&rs=1&pid=ImgDetMain"
+            alt="Hobart Hurricanes">
+          <p style="color:#6A2E89;">Hobart Hurricanes</p>
+          <div class="click-hint">TAP FOR DETAILS</div>
+        </div>
+        <div class="team-card" onclick="openTeamModal('renegades')" style="--tc:#E31B23;border-color:#E31B23;"><img
+            src="https://tse3.mm.bing.net/th/id/OIP.myiwr4dE7Oh6NYwpgfrPywHaHa?cb=defcache2&rs=1&pid=ImgDetMain"
+            alt="Melbourne Renegades">
+          <p style="color:#E31B23;">Melbourne Renegades</p>
+          <div class="click-hint">TAP FOR DETAILS</div>
+        </div>
+        <div class="team-card" onclick="openTeamModal('stars')" style="--tc:#009639;border-color:#009639;"><img
+            src="https://aniportalimages.s3.amazonaws.com/media/details/starkapilla.jpg" alt="Melbourne Stars">
+          <p style="color:#009639;">Melbourne Stars</p>
+          <div class="click-hint">TAP FOR DETAILS</div>
+        </div>
+        <div class="team-card" onclick="openTeamModal('scorchers')" style="--tc:#F58020;border-color:#F58020;"><img
+            src="https://tse1.mm.bing.net/th/id/OIP.MzdSMt3HvcW5LmtT_kXd6gHaEQ?cb=defcache2&rs=1&pid=ImgDetMain"
+            alt="Perth Scorchers">
+          <p style="color:#F58020;">Perth Scorchers</p>
+          <div class="click-hint">TAP FOR DETAILS</div>
+        </div>
+        <div class="team-card" onclick="openTeamModal('sixers')" style="--tc:#E6007E;border-color:#E6007E;"><img
+            src="https://www.sydneysixers.com.au/resources/ver/v1.10.8/assets/sydney-sixers/share-card.jpg"
+            alt="Sydney Sixers">
+          <p style="color:#E6007E;">Sydney Sixers</p>
+          <div class="click-hint">TAP FOR DETAILS</div>
+        </div>
+        <div class="team-card" onclick="openTeamModal('thunder')" style="--tc:#BAE100;border-color:#BAE100;"><img
+            src="https://tse2.mm.bing.net/th/id/OIP.qhRkqpwT62VFu4vUh7KV7wHaEQ?cb=defcache2&rs=1&pid=ImgDetMain"
+            alt="Sydney Thunder">
+          <p style="color:#BAE100;">Sydney Thunder</p>
+          <div class="click-hint">TAP FOR DETAILS</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SCHEDULE PAGE ═══ -->
+  <div class="page" id="schedulePage">
+    <p class="page-heading" style="margin-top:44px;">Match Schedule</p>
+    <p class="page-sub">BBL|14 Season Fixtures — Click any match for details</p>
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="filterSchedule('all',this)">All Matches</button>
+      <button class="filter-btn" onclick="filterSchedule('done',this)">✅ Completed</button>
+      <button class="filter-btn" onclick="filterSchedule('live',this)">🔴 Live</button>
+      <button class="filter-btn" onclick="filterSchedule('upcoming',this)">📅 Upcoming</button>
+      <button class="filter-btn" id="teamFilterBtn" onclick="toggleTeamFilter()" style="position:relative;">By Team
+        ▾</button>
+    </div>
+    <div id="teamFilterPanel"
+      style="display:none;text-align:center;margin-bottom:18px;max-width:960px;margin-left:auto;margin-right:auto;padding:0 20px;">
+      <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;" id="teamFilterBtns"></div>
+    </div>
+    <div class="schedule-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Date</th>
+            <th>Home</th>
+            <th>Away</th>
+            <th>Venue</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="scheduleBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ STATS PAGE ═══ -->
+  <div class="page" id="statsPage">
+    <p class="page-heading" style="margin-top:44px;">Player Stats</p>
+    <p class="page-sub">BBL|14 Season Leaders — Click any player for full profile</p>
+
+    <!-- POINTS TABLE -->
+    <div class="points-table-wrap">
+      <h2>Points Table</h2>
+      <div style="overflow-x:auto;">
+        <table class="pt-table" id="pointsTable"></table>
+      </div>
+    </div>
+
+    <div class="stats-grid" id="statsGrid"></div>
+  </div>
+
+  <!-- ═══ FAN ZONE PAGE ═══ -->
+  <div class="page" id="fanzonePage">
+    <div class="fanzone-hero">
+      <h1>⚡ FAN ZONE</h1>
+      <p style="color:var(--text-secondary);font-size:14px;margin-top:8px;">Vote, predict, and climb the leaderboard!
+      </p>
+    </div>
+    <div class="fanzone-grid">
+
+      <!-- POLL -->
+      <div class="fanzone-card" style="grid-column:1/-1;">
+        <div class="fanzone-card-header" style="background:linear-gradient(135deg,#003366,#1a0066);">🗳️ Who Will Win
+          BBL|14?</div>
+        <div class="fanzone-card-body">
+          <div>
+            <div class="poll-options" id="pollOptions"></div>
+            <p class="poll-count" id="pollCount" style="margin-top:10px;">0 votes cast</p>
+            <button class="poll-reset" onclick="resetPoll()">Reset My Vote</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAN QUIZ CARD -->
+      <div class="fanzone-card" style="grid-column:1/-1;">
+        <div class="fanzone-card-header" style="background:linear-gradient(135deg,#0a2540,#1a1060);">🧠 BBL Fan Quiz —
+          Test Your Knowledge!</div>
+        <div class="fanzone-card-body">
+          <div id="quizArea">
+            <div id="quizQuestion"
+              style="font-size:16px;font-weight:700;color:#fff;margin-bottom:16px;line-height:1.5;"></div>
+            <div id="quizOptions" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"></div>
+            <div id="quizFeedback"
+              style="display:none;margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;font-size:14px;">
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;">
+              <div style="font-size:13px;color:rgba(255,255,255,0.5);">Score: <span id="quizScore"
+                  style="color:#CCFF00;font-family:'Bebas Neue';font-size:18px;">0</span> / <span
+                  id="quizTotal">0</span></div>
+              <button id="quizNextBtn" onclick="nextQuestion()"
+                style="display:none;background:#CCFF00;color:#000;border:none;border-radius:8px;padding:8px 20px;font-weight:700;font-size:13px;cursor:pointer;">NEXT
+                →</button>
+            </div>
+            <div
+              style="margin-top:10px;background:rgba(255,255,255,0.07);border-radius:6px;height:5px;overflow:hidden;">
+              <div id="quizProgress"
+                style="height:100%;background:#CCFF00;border-radius:6px;transition:width .4s;width:0%;"></div>
+            </div>
+          </div>
+          <div id="quizEnd" style="display:none;text-align:center;padding:20px 0;">
+            <div style="font-size:48px;margin-bottom:10px;" id="quizEndEmoji">🏆</div>
+            <div style="font-family:'Bebas Neue';font-size:28px;color:#CCFF00;letter-spacing:3px;" id="quizEndTitle">
+              QUIZ COMPLETE!</div>
+            <div style="color:rgba(255,255,255,.6);font-size:14px;margin:8px 0 18px;" id="quizEndMsg"></div>
+            <button onclick="startQuiz()"
+              style="background:#CCFF00;color:#000;border:none;border-radius:10px;padding:10px 28px;font-weight:700;font-size:14px;cursor:pointer;letter-spacing:1px;">PLAY
+              AGAIN</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CRICKET WORDLE / DAILY PLAYER GUESS -->
+      <div class="fanzone-card">
+        <div class="fanzone-card-header" style="background:linear-gradient(135deg,#00334d,#1a0044);">🏏 Who Am I? —
+          Guess The Player</div>
+        <div class="fanzone-card-body">
+          <p style="font-size:12px;color:var(--text-secondary);margin-bottom:14px;">Read the clues one by one. Guess the
+            mystery BBL player!</p>
+          <div id="clueBox" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+          <div style="display:flex;gap:8px;margin-bottom:12px;">
+            <input id="playerGuessInput" type="text" placeholder="Type player name…"
+              style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:9px 12px;color:#fff;font-family:'Lato';font-size:13px;outline:none;">
+            <button onclick="checkPlayerGuess()"
+              style="background:#CCFF00;color:#000;border:none;border-radius:9px;padding:9px 16px;font-weight:700;font-size:13px;cursor:pointer;">GUESS</button>
+          </div>
+          <div id="guessFeedback" style="font-size:13px;font-weight:700;min-height:20px;"></div>
+          <div id="guessAttempts" style="font-size:11px;color:rgba(255,255,255,.4);margin-top:6px;"></div>
+          <button onclick="newPlayerPuzzle()"
+            style="margin-top:12px;background:transparent;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.45);border-radius:8px;padding:5px 14px;font-size:11px;cursor:pointer;transition:all .2s;"
+            onmouseover="this.style.borderColor='#CCFF00';this.style.color='#CCFF00';"
+            onmouseout="this.style.borderColor='rgba(255,255,255,.15)';this.style.color='rgba(255,255,255,.45)';">New
+            Puzzle</button>
+        </div>
+      </div>
+
+      <!-- LEADERBOARD -->
+      <div class="fanzone-card">
+        <div class="fanzone-card-header" style="background:linear-gradient(135deg,#660033,#003300);">🏆 Prediction
+          Leaderboard</div>
+        <div class="fanzone-card-body">
+          <p style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">Predict the winner & top scorer to
+            earn maximum prediction points!</p>
+          <div class="lb-form" style="flex-direction:column;gap:10px;">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <input type="text" id="lbName" placeholder="Your name" maxlength="18" style="flex:1;min-width:100px;">
+              <select id="lbPick"
+                style="flex:1;min-width:120px;background:rgba(0,10,30,0.9);border:1px solid rgba(255,255,255,0.14);border-radius:9px;padding:9px 12px;color:#fff;font-family:'Lato',sans-serif;font-size:12px;outline:none;cursor:pointer;"></select>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <select id="lbMargin"
+                style="flex:1;min-width:120px;background:rgba(0,10,30,0.9);border:1px solid rgba(255,255,255,0.14);border-radius:9px;padding:9px 12px;color:#fff;font-family:'Lato',sans-serif;font-size:12px;outline:none;cursor:pointer;">
+                <option value="runs">Win by Runs</option>
+                <option value="wickets">Win by Wickets</option>
+                <option value="superover">Super Over</option>
+              </select>
+              <select id="lbTopScorer"
+                style="flex:1;background:rgba(0,10,30,0.9);border:1px solid rgba(255,255,255,0.14);border-radius:9px;padding:9px 12px;color:#fff;font-family:'Lato',sans-serif;font-size:12px;outline:none;cursor:pointer;">
+                <option value="">— Top scorer (optional) —</option>
+              </select>
+              <button class="lb-submit" onclick="submitPrediction()">PREDICT</button>
+            </div>
+          </div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.3);margin:8px 0 12px;text-align:center;">Points awarded
+            for accuracy. Bonus pts for top scorer & margin prediction.</div>
+          <div class="lb-list" id="lbList"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ MERCHANT PAGE ═══ -->
+  <div class="page" id="merchantPage" style="flex-direction:column;padding:40px 20px 80px;">
+    <h1 class="page-heading">🛒 BBL MERCH STORE</h1>
+    <p class="page-sub">Official team merchandise — add to cart & checkout</p>
+
+    <!-- Team Filter -->
+    <div class="filter-row" id="merchTeamFilter" style="margin-bottom:24px;"></div>
+
+    <!-- Products Grid -->
+    <div id="productsGrid"
+      style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px;max-width:1200px;margin:0 auto 40px;width:100%;">
+    </div>
+
+    <!-- Cart Panel -->
+    <div id="cartPanel"
+      style="max-width:700px;margin:0 auto;width:100%;background:rgba(0,5,15,.85);border:1px solid rgba(255,255,255,.1);border-radius:18px;overflow:hidden;backdrop-filter:blur(10px);">
+      <div
+        style="padding:18px 24px;background:linear-gradient(135deg,rgba(204,255,0,.12),rgba(0,51,102,.2));border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:#CCFF00;">🛍️ YOUR CART</span>
+        <span id="cartBadge"
+          style="background:#CCFF00;color:#000;border-radius:20px;padding:2px 10px;font-weight:700;font-size:13px;">0
+          items</span>
+      </div>
+      <div id="cartItems" style="padding:16px 24px;max-height:320px;overflow-y:auto;min-height:60px;">
+        <p style="color:rgba(255,255,255,.35);font-size:13px;text-align:center;padding:20px 0;">Your cart is empty. Add
+          some merch!</p>
+      </div>
+      <div style="padding:16px 24px;border-top:1px solid rgba(255,255,255,.07);">
+        <div
+          style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;color:rgba(255,255,255,.5);">
+          <span>Subtotal</span><span id="cartSubtotal">$0.00</span>
+        </div>
+        <div
+          style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;color:rgba(255,255,255,.5);">
+          <span>Shipping</span><span id="cartShipping">$0.00</span>
+        </div>
+        <div
+          style="display:flex;justify-content:space-between;margin-bottom:16px;font-size:16px;font-weight:700;color:#CCFF00;">
+          <span>Total</span><span id="cartTotal">$0.00</span>
+        </div>
+        <button onclick="openCheckout()" id="checkoutBtn"
+          style="width:100%;background:#CCFF00;color:#000;border:none;border-radius:12px;padding:14px;font-family:'Bebas Neue';font-size:20px;letter-spacing:3px;cursor:pointer;transition:transform .15s,box-shadow .15s;"
+          onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 24px rgba(204,255,0,.4)'"
+          onmouseout="this.style.transform='';this.style.boxShadow=''">PROCEED TO CHECKOUT</button>
+        <button onclick="clearCart()"
+          style="width:100%;background:transparent;border:1px solid rgba(255,100,100,.3);color:rgba(255,100,100,.6);border-radius:10px;padding:8px;margin-top:8px;font-size:12px;cursor:pointer;transition:all .2s;"
+          onmouseover="this.style.borderColor='#ff6b6b';this.style.color='#ff6b6b'"
+          onmouseout="this.style.borderColor='rgba(255,100,100,.3)';this.style.color='rgba(255,100,100,.6)'">Clear
+          Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECKOUT MODAL -->
+  <div id="checkoutModal"
+    style="position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:400;display:none;justify-content:center;align-items:flex-start;padding:30px 16px;overflow-y:auto;backdrop-filter:blur(6px);">
+    <div
+      style="background:rgba(5,10,25,.98);border-radius:22px;width:100%;max-width:560px;overflow:hidden;animation:fadeUp .4s ease;border:1px solid rgba(255,255,255,.1);box-shadow:0 20px 80px rgba(0,0,0,.8);">
+      <div
+        style="padding:22px 28px;background:linear-gradient(135deg,rgba(204,255,0,.12),transparent);border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-family:'Bebas Neue';font-size:24px;letter-spacing:3px;color:#CCFF00;">💳 CHECKOUT</span>
+        <button onclick="closeCheckout()"
+          style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.55);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;">✕</button>
+      </div>
+      <div id="checkoutBody" style="padding:24px 28px;"></div>
+    </div>
+  </div>
+
+  <!-- BILL MODAL -->
+  <div id="billModal"
+    style="position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:450;display:none;justify-content:center;align-items:flex-start;padding:30px 16px;overflow-y:auto;backdrop-filter:blur(6px);">
+    <div
+      style="background:#fff;border-radius:18px;width:100%;max-width:520px;overflow:hidden;animation:fadeUp .4s ease;box-shadow:0 20px 80px rgba(0,0,0,.9);">
+      <div id="billContent" style="padding:32px;font-family:'Lato',sans-serif;color:#111;"></div>
+      <div style="padding:16px 32px 24px;display:flex;gap:10px;border-top:1px solid #eee;">
+        <button onclick="printBill()"
+          style="flex:1;background:#003366;color:#CCFF00;border:none;border-radius:10px;padding:12px;font-weight:700;font-size:14px;cursor:pointer;">🖨️
+          PRINT BILL</button>
+        <button onclick="closeBill()"
+          style="flex:1;background:#f0f0f0;color:#333;border:none;border-radius:10px;padding:12px;font-weight:700;font-size:14px;cursor:pointer;">CLOSE</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════
+    // DATA
+    // ═══════════════════════════════════════════════════════════
+    const TEAM_COLORS = { 'Adelaide Strikers': '#00AEEF', 'Brisbane Heat': '#00A4A7', 'Hobart Hurricanes': '#6A2E89', 'Melbourne Renegades': '#E31B23', 'Melbourne Stars': '#009639', 'Perth Scorchers': '#F58020', 'Sydney Sixers': '#E6007E', 'Sydney Thunder': '#BAE100' };
+
+    const TEAMS = {
+      strikers: { name: 'Adelaide Strikers', color: '#00AEEF', logo: 'https://www.crickettoday.com/wp-content/uploads/2023/11/adeladiestrikers.webp', home: 'Adelaide Oval', founded: 2011, titles: 1, stats: { matches: 86, wins: 48, losses: 36, winPct: '55.8%', nrr: '+0.42' }, topScorers: [{ n: 'Travis Head', r: 612, sr: 168 }, { n: 'Matt Short', r: 488, sr: 158 }, { n: 'Jake Weatherald', r: 421, sr: 145 }, { n: 'Henry Hunt', r: 295, sr: 139 }, { n: 'Alex Carey', r: 266, sr: 131 }], topWickets: [{ n: 'Rashid Khan', w: 18, e: 6.21 }, { n: 'Henry Thornton', w: 15, e: 7.42 }, { n: 'Wes Agar', w: 13, e: 8.11 }, { n: 'Peter Siddle', w: 11, e: 7.88 }, { n: 'Daniel Worrall', w: 10, e: 8.34 }], squad: { batters: ['Travis Head', 'Jake Weatherald', 'Matt Short', 'Henry Hunt', 'Ian Cockbain'], allrounders: ['Thomas Kelly', 'Alex Carey', 'Jamie Overton'], bowlers: ['Rashid Khan', 'Henry Thornton', 'Wes Agar', 'Peter Siddle', 'Daniel Worrall', 'Nick Winter'] }, honors: ['BBL|07 Champions 2018', 'BBL|13 Runners-Up'] },
+      heat: { name: 'Brisbane Heat', color: '#00A4A7', logo: 'https://tse2.mm.bing.net/th/id/OIP.KRDxQuRT5xQW6emc16k5CAHaEY?cb=defcache2&rs=1&pid=ImgDetMain', home: 'The Gabba', founded: 2011, titles: 1, stats: { matches: 86, wins: 44, losses: 40, winPct: '51.2%', nrr: '+0.18' }, topScorers: [{ n: 'Chris Lynn', r: 511, sr: 163 }, { n: 'Max Bryant', r: 432, sr: 148 }, { n: 'Jimmy Peirson', r: 398, sr: 134 }, { n: 'Usman Khawaja', r: 354, sr: 141 }, { n: 'Sam Heazlett', r: 287, sr: 129 }], topWickets: [{ n: 'Xavier Bartlett', w: 16, e: 7.51 }, { n: 'Mitch Swepson', w: 14, e: 7.33 }, { n: 'Mark Steketee', w: 13, e: 8.22 }, { n: 'Michael Neser', w: 12, e: 7.89 }, { n: 'Jack Wood', w: 9, e: 8.55 }], squad: { batters: ['Chris Lynn', 'Max Bryant', 'Usman Khawaja', 'Sam Heazlett', 'Matt Renshaw'], allrounders: ['Jimmy Peirson', 'Michael Neser', 'Paul Walter'], bowlers: ['Xavier Bartlett', 'Mitch Swepson', 'Mark Steketee', 'Jack Wood', 'Marnus Labuschagne'] }, honors: ['BBL|12 Champions 2023'] },
+      hurricanes: { name: 'Hobart Hurricanes', color: '#6A2E89', logo: 'https://tse1.mm.bing.net/th/id/OIP.fWOpc-9atRy5nQVTGUm6CgHaHa?cb=defcache2&rs=1&pid=ImgDetMain', home: 'Blundstone Arena', founded: 2011, titles: 0, stats: { matches: 86, wins: 40, losses: 44, winPct: '46.5%', nrr: '-0.11' }, topScorers: [{ n: 'Matthew Wade', r: 543, sr: 148 }, { n: "D'Arcy Short", r: 498, sr: 178 }, { n: 'Ben McDermott', r: 442, sr: 152 }, { n: 'Caleb Jewell', r: 367, sr: 138 }, { n: 'Tim David', r: 295, sr: 164 }], topWickets: [{ n: 'Riley Meredith', w: 18, e: 8.22 }, { n: 'Joel Paris', w: 14, e: 7.98 }, { n: 'Qais Ahmad', w: 13, e: 7.11 }, { n: 'Nathan Ellis', w: 11, e: 8.45 }, { n: 'Tom Rogers', w: 9, e: 8.77 }], squad: { batters: ['Matthew Wade', 'Ben McDermott', 'Caleb Jewell', 'Macalister Wright', 'Jordan Cox'], allrounders: ["D'Arcy Short", 'Tim David', 'Nikhil Chaudhary'], bowlers: ['Riley Meredith', 'Joel Paris', 'Qais Ahmad', 'Nathan Ellis', 'Tom Rogers', 'Peter Hatzoglou'] }, honors: ['BBL|06 Runners-Up 2017'] },
+      renegades: { name: 'Melbourne Renegades', color: '#E31B23', logo: 'https://tse3.mm.bing.net/th/id/OIP.myiwr4dE7Oh6NYwpgfrPywHaHa?cb=defcache2&rs=1&pid=ImgDetMain', home: 'Marvel Stadium', founded: 2011, titles: 1, stats: { matches: 86, wins: 38, losses: 46, winPct: '44.2%', nrr: '-0.28' }, topScorers: [{ n: 'Aaron Finch', r: 498, sr: 149 }, { n: 'Tim Seifert', r: 412, sr: 145 }, { n: 'Shaun Marsh', r: 389, sr: 136 }, { n: 'Mackenzie Harvey', r: 334, sr: 141 }, { n: 'Nic Maddinson', r: 298, sr: 138 }], topWickets: [{ n: 'Nathan Coulter-Nile', w: 21, e: 7.88 }, { n: 'Tom O\'Connell', w: 15, e: 8.12 }, { n: 'Imran Tahir', w: 14, e: 7.55 }, { n: 'Kane Richardson', w: 13, e: 8.34 }, { n: 'James Pattinson', w: 11, e: 8.67 }], squad: { batters: ['Aaron Finch', 'Shaun Marsh', 'Nic Maddinson', 'Mackenzie Harvey', 'Jake Fraser-McGurk'], allrounders: ['Tim Seifert', 'Zak Evans', 'Josh Brown'], bowlers: ['Nathan Coulter-Nile', 'Imran Tahir', 'Kane Richardson', 'James Pattinson', 'Tom O\'Connell'] }, honors: ['BBL|08 Champions 2019'] },
+      stars: { name: 'Melbourne Stars', color: '#009639', logo: 'https://aniportalimages.s3.amazonaws.com/media/details/starkapilla.jpg', home: 'Melbourne Cricket Ground', founded: 2011, titles: 0, stats: { matches: 86, wins: 37, losses: 47, winPct: '43.0%', nrr: '-0.35' }, topScorers: [{ n: 'Glenn Maxwell', r: 478, sr: 165 }, { n: 'Joe Clarke', r: 423, sr: 144 }, { n: 'Marcus Stoinis', r: 399, sr: 158 }, { n: 'Nick Larkin', r: 312, sr: 131 }, { n: 'Hilton Cartwright', r: 278, sr: 127 }], topWickets: [{ n: 'Adam Zampa', w: 17, e: 6.84 }, { n: 'Jackson Bird', w: 12, e: 8.21 }, { n: 'Brody Couch', w: 11, e: 8.45 }, { n: 'Qais Ahmad', w: 9, e: 7.12 }, { n: 'Campbell Kellaway', w: 8, e: 8.91 }], squad: { batters: ['Glenn Maxwell', 'Joe Clarke', 'Nick Larkin', 'Hilton Cartwright', 'Tom Lammonby'], allrounders: ['Marcus Stoinis', 'Beau Webster', 'Andre Russell'], bowlers: ['Adam Zampa', 'Jackson Bird', 'Brody Couch', 'Campbell Kellaway', 'Tom O\'Connell'] }, honors: ['BBL|12 Runners-Up 2023'] },
+      scorchers: { name: 'Perth Scorchers', color: '#F58020', logo: 'https://tse1.mm.bing.net/th/id/OIP.MzdSMt3HvcW5LmtT_kXd6gHaEQ?cb=defcache2&rs=1&pid=ImgDetMain', home: 'Optus Stadium', founded: 2011, titles: 4, stats: { matches: 86, wins: 55, losses: 29, winPct: '64.0%', nrr: '+0.78' }, topScorers: [{ n: 'Josh Inglis', r: 589, sr: 158 }, { n: 'Ashton Turner', r: 445, sr: 148 }, { n: 'Kurtis Patterson', r: 412, sr: 136 }, { n: 'Laurie Evans', r: 378, sr: 142 }, { n: 'Cameron Bancroft', r: 321, sr: 128 }], topWickets: [{ n: 'Andrew Tye', w: 20, e: 7.88 }, { n: 'Jason Behrendorff', w: 17, e: 7.44 }, { n: 'Jhye Richardson', w: 16, e: 7.65 }, { n: 'Peter Hatzoglou', w: 13, e: 7.98 }, { n: 'Matt Kelly', w: 10, e: 8.55 }], squad: { batters: ['Josh Inglis', 'Kurtis Patterson', 'Laurie Evans', 'Cameron Bancroft', 'Cooper Connolly'], allrounders: ['Ashton Turner', 'Aaron Hardie', 'Nick Hobson'], bowlers: ['Andrew Tye', 'Jason Behrendorff', 'Jhye Richardson', 'Peter Hatzoglou', 'Matt Kelly'] }, honors: ['4× BBL Champions (2017,2019,2022,2024)', 'Most titles in BBL history'] },
+      sixers: { name: 'Sydney Sixers', color: '#E6007E', logo: 'https://www.sydneysixers.com.au/resources/ver/v1.10.8/assets/sydney-sixers/share-card.jpg', home: 'Sydney Cricket Ground', founded: 2011, titles: 4, stats: { matches: 86, wins: 52, losses: 32, winPct: '60.5%', nrr: '+0.61' }, topScorers: [{ n: 'Moises Henriques', r: 445, sr: 145 }, { n: 'Josh Philippe', r: 423, sr: 152 }, { n: 'Jack Edwards', r: 378, sr: 138 }, { n: 'James Vince', r: 352, sr: 143 }, { n: 'Jordan Silk', r: 298, sr: 128 }], topWickets: [{ n: 'Josh Hazlewood', w: 24, e: 7.22 }, { n: 'Ben Dwarshuis', w: 19, e: 7.88 }, { n: 'Sean Abbott', w: 17, e: 7.55 }, { n: 'Jackson Bird', w: 12, e: 8.11 }, { n: 'Steve O\'Keefe', w: 10, e: 7.34 }], squad: { batters: ['Josh Philippe', 'James Vince', 'Jack Edwards', 'Jordan Silk', 'Justin Avendano'], allrounders: ['Moises Henriques', 'Carlos Brathwaite', 'Dan Christian'], bowlers: ['Josh Hazlewood', 'Ben Dwarshuis', 'Sean Abbott', 'Jackson Bird', 'Steve O\'Keefe'] }, honors: ['4× BBL Champions (2020,2021,2023)', 'Dominant 2019-21 dynasty'] },
+      thunder: { name: 'Sydney Thunder', color: '#BAE100', logo: 'https://tse2.mm.bing.net/th/id/OIP.qhRkqpwT62VFu4vUh7KV7wHaEQ?cb=defcache2&rs=1&pid=ImgDetMain', home: 'Manuka Oval / Sydney Showgrounds', founded: 2011, titles: 1, stats: { matches: 86, wins: 42, losses: 42, winPct: '50.0%', nrr: '-0.04' }, topScorers: [{ n: 'David Warner', r: 467, sr: 152 }, { n: 'Sam Billings', r: 412, sr: 168 }, { n: 'Alex Hales', r: 389, sr: 155 }, { n: 'Oliver Davies', r: 311, sr: 141 }, { n: 'Jason Sangha', r: 278, sr: 129 }], topWickets: [{ n: 'Nathan McAndrew', w: 15, e: 8.12 }, { n: 'Chris Tremain', w: 13, e: 8.44 }, { n: 'Daniel Sams', w: 12, e: 8.78 }, { n: 'Fazalhaq Farooqi', w: 11, e: 7.88 }, { n: 'Arjun Nair', w: 9, e: 8.22 }], squad: { batters: ['David Warner', 'Alex Hales', 'Oliver Davies', 'Jason Sangha', 'Matthew Gilkes'], allrounders: ['Sam Billings', 'Daniel Sams', 'Gurinder Sandhu'], bowlers: ['Nathan McAndrew', 'Chris Tremain', 'Fazalhaq Farooqi', 'Arjun Nair', 'Chris Green'] }, honors: ['BBL|05 Champions 2016'] }
+    };
+
+    const POINTS_TABLE = [
+      { team: 'Perth Scorchers', p: 14, w: 10, l: 3, nr: 1, pts: 21, nrr: '+0.78' },
+      { team: 'Sydney Sixers', p: 14, w: 9, l: 4, nr: 1, pts: 19, nrr: '+0.61' },
+      { team: 'Adelaide Strikers', p: 14, w: 8, l: 5, nr: 1, pts: 17, nrr: '+0.42' },
+      { team: 'Brisbane Heat', p: 14, w: 7, l: 6, nr: 1, pts: 15, nrr: '+0.18' },
+      { team: 'Sydney Thunder', p: 14, w: 7, l: 7, nr: 0, pts: 14, nrr: '-0.04' },
+      { team: 'Hobart Hurricanes', p: 14, w: 6, l: 7, nr: 1, pts: 13, nrr: '-0.11' },
+      { team: 'Melbourne Renegades', p: 14, w: 5, l: 8, nr: 1, pts: 11, nrr: '-0.28' },
+      { team: 'Melbourne Stars', p: 14, w: 4, l: 9, nr: 1, pts: 9, nrr: '-0.35' },
+    ];
+
+    // Real player photos (cricinfo/ESPNcricinfo headshots)
+    const PLAYER_PHOTOS = {
+      'Travis Head': 'https://documents.iplt20.com/ipl/IPLHeadshot2026/37.png',
+      'Josh Inglis': 'https://static-files.cricket-australia.pulselive.com/headshots/440/1151-bbl.png',
+      'Matthew Wade': 'https://documents.iplt20.com/ipl/IPLHeadshot2024/549.png',
+      'Chris Lynn': 'https://documents.iplt20.com/playerheadshot/ipl/284/179.png',
+      'Aaron Finch': 'https://documents.iplt20.com/playerheadshot/ipl/210/167.png',
+      'Josh Hazlewood': 'http://documents.iplt20.com/ipl/IPLHeadshot2026/36.png',
+      'Nathan Coulter-Nile': 'https://static-files.cricket-australia.pulselive.com/headshots/440/1145-camedia.png',
+      'Andrew Tye': 'https://static-files.cricket-australia.pulselive.com/headshots/288/359-camedia.png',
+      'Ben Dwarshuis': 'https://static-files.cricket-australia.pulselive.com/headshots/440/770-bbl.png',
+      'Riley Meredith': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGrrb4_3AengMZfmeSxk584I3s77GkSrcZJw&s',
+      "D'Arcy Short": 'https://static-files.cricket-australia.pulselive.com/headshots/288/286-bbl.png',
+      'Tim David': 'https://static.toiimg.com/photo/120897574.cms',
+      'Sam Billings': 'https://static-files.cricket-australia.pulselive.com/headshots/440/112-bbl.png',
+      'Glenn Maxwell': 'https://static-files.cricket-australia.pulselive.com/headshots/440/591-bbl.png',
+      'Rashid Khan': 'https://static-files.cricket-australia.pulselive.com/headshots/440/272-bbl.png',
+      'Adam Zampa': 'https://documents.iplt20.com/ipl/IPLHeadshot2025/24.png',
+      'Nathan Lyon': 'https://static-files.cricket-australia.pulselive.com/headshots/288/726-bbl.png',
+      'Xavier Bartlett': 'https://static-files.cricket-australia.pulselive.com/headshots/440/877-bbl.png',
+      'David Warner': 'https://static-files.cricket-australia.pulselive.com/headshots/440/1189-camedia.png',
+      'Moises Henriques': 'https://static-files.cricket-australia.pulselive.com/headshots/440/912-camedia.png',
+      'Matt Short': 'https://static-files.cricket-australia.pulselive.com/headshots/288/1080-camedia.png',
+      'Jason Behrendorff': 'https://resources.ecb.co.uk/photo-resources/2025/08/05/50662e4a-a00a-4de8-b41a-7ea3c3a18ad5/Jason-Behrendorff-Invincibles.png?width=460&height=690',
+    };
+
+    // Full player stat cards for blast modal
+    const PLAYER_STATS_DETAIL = {
+      'Travis Head': { team: 'Adelaide Strikers', role: 'Batter/WK', runs: 612, avg: 45.8, sr: 168.4, hs: 98, fiftys: 5, hundreds: 0, fours: 62, sixes: 29, catches: 16, mom: 4, matches: 14 },
+      'Josh Inglis': { team: 'Perth Scorchers', role: 'WK-Batter', runs: 589, avg: 43.6, sr: 158.8, hs: 94, fiftys: 5, hundreds: 0, fours: 58, sixes: 24, catches: 22, mom: 3, matches: 14 },
+      'Matthew Wade': { team: 'Hobart Hurricanes', role: 'WK-Batter', runs: 543, avg: 40.2, sr: 148.6, hs: 88, fiftys: 4, hundreds: 0, fours: 49, sixes: 21, catches: 18, mom: 2, matches: 14 },
+      'Chris Lynn': { team: 'Brisbane Heat', role: 'Batter', runs: 511, avg: 38.5, sr: 163.0, hs: 101, fiftys: 3, hundreds: 1, fours: 44, sixes: 38, catches: 8, mom: 2, matches: 13 },
+      'Aaron Finch': { team: 'Melbourne Renegades', role: 'Batter', runs: 498, avg: 36.2, sr: 149.5, hs: 82, fiftys: 4, hundreds: 0, fours: 47, sixes: 22, catches: 10, mom: 1, matches: 14 },
+      'Josh Hazlewood': { team: 'Sydney Sixers', role: 'Fast Bowler', wkts: 24, econ: 7.22, avg: 16.8, bb: '4/22', fours_wkts: 2, sr_bowl: 12.1, dot_pct: '44%', matches: 14 },
+      'Nathan Coulter-Nile': { team: 'Melbourne Renegades', role: 'Fast Bowler', wkts: 21, econ: 7.88, avg: 19.4, bb: '4/28', fours_wkts: 1, sr_bowl: 14.8, dot_pct: '40%', matches: 14 },
+      'Andrew Tye': { team: 'Perth Scorchers', role: 'Fast Bowler', wkts: 20, econ: 7.88, avg: 18.9, bb: '5/27', fours_wkts: 2, sr_bowl: 14.4, dot_pct: '41%', matches: 14 },
+      'Ben Dwarshuis': { team: 'Sydney Sixers', role: 'Fast Bowler', wkts: 19, econ: 7.88, avg: 20.1, bb: '4/31', fours_wkts: 1, sr_bowl: 15.3, dot_pct: '39%', matches: 13 },
+      'Riley Meredith': { team: 'Hobart Hurricanes', role: 'Fast Bowler', wkts: 18, econ: 8.22, avg: 21.5, bb: '3/19', fours_wkts: 0, sr_bowl: 15.7, dot_pct: '37%', matches: 14 },
+      "D'Arcy Short": { team: 'Hobart Hurricanes', role: 'All-rounder', runs: 498, avg: 38.3, sr: 178.4, hs: 96, fiftys: 4, hundreds: 0, fours: 41, sixes: 31, catches: 7, mom: 3, matches: 14 },
+      'Tim David': { team: 'Melbourne Renegades', role: 'Batter', runs: 295, avg: 36.8, sr: 171.2, hs: 74, fiftys: 2, hundreds: 0, fours: 22, sixes: 26, catches: 5, mom: 1, matches: 10 },
+      'Sam Billings': { team: 'Sydney Thunder', role: 'WK-Batter', runs: 412, avg: 34.3, sr: 168.9, hs: 77, fiftys: 3, hundreds: 0, fours: 46, sixes: 18, catches: 14, mom: 2, matches: 14 },
+      'Glenn Maxwell': { team: 'Melbourne Stars', role: 'All-rounder', runs: 478, avg: 35.4, sr: 165.3, hs: 89, fiftys: 4, hundreds: 0, fours: 39, sixes: 34, catches: 14, mom: 2, matches: 14 },
+      'Rashid Khan': { team: 'Adelaide Strikers', role: 'Leg Spinner', wkts: 18, econ: 6.21, avg: 17.3, bb: '4/18', fours_wkts: 2, sr_bowl: 16.7, dot_pct: '46%', matches: 14 },
+      'Adam Zampa': { team: 'Melbourne Stars', role: 'Leg Spinner', wkts: 17, econ: 6.84, avg: 20.2, bb: '3/22', fours_wkts: 0, sr_bowl: 17.6, dot_pct: '43%', matches: 14 },
+      'Xavier Bartlett': { team: 'Brisbane Heat', role: 'Fast Bowler', wkts: 16, econ: 7.51, avg: 22.1, bb: '3/24', fours_wkts: 0, sr_bowl: 17.7, dot_pct: '38%', matches: 14 },
+      'David Warner': { team: 'Sydney Thunder', role: 'Batter', runs: 467, avg: 38.9, sr: 152.6, hs: 85, fiftys: 4, hundreds: 0, fours: 54, sixes: 19, catches: 9, mom: 2, matches: 13 },
+      'Moises Henriques': { team: 'Sydney Sixers', role: 'All-rounder', runs: 445, avg: 37.2, sr: 145.8, hs: 78, fiftys: 4, hundreds: 0, fours: 38, sixes: 14, catches: 12, mom: 1, matches: 14 },
+      'Matt Short': { team: 'Adelaide Strikers', role: 'All-rounder', runs: 488, avg: 37.5, sr: 158.2, hs: 88, fiftys: 4, hundreds: 0, fours: 43, sixes: 22, catches: 9, mom: 2, matches: 14 },
+      'Jason Behrendorff': { team: 'Perth Scorchers', role: 'Fast Bowler', wkts: 17, econ: 7.44, avg: 19.5, bb: '4/26', fours_wkts: 1, sr_bowl: 15.7, dot_pct: '41%', matches: 14 },
+    };
+
+    const SCHEDULE = [
+      {
+        id: 1, date: 'Dec 15', home: 'Sydney Sixers', away: 'Melbourne Stars', venue: 'SCG, Sydney', status: 'done',
+        result: { winner: 'Sydney Sixers', score1: '172/5 (20ov)', score2: '165/7 (20ov)', mom: 'Josh Philippe', momStats: '78 off 44, 2 catches', margin: '7 runs', partnership: '85 (Henriques-Philippe)', topBat1: 'Josh Philippe 78', topBat2: 'James Vince 42', topBowl1: 'Ben Dwarshuis 3/28', topBowl2: 'Sean Abbott 2/31', topBat1opp: 'Glenn Maxwell 61', topBat2opp: 'Marcus Stoinis 44', topBowl1opp: 'Adam Zampa 2/30', topBowl2opp: 'Jackson Bird 2/34', extras1: 'Wides: 4, No balls: 2', extras2: 'Wides: 6, No balls: 1', stadium: 'Sydney Cricket Ground', toss: 'Sydney Sixers won toss, elected to bat', result_type: 'Result', summary: 'Sixers edged out Stars in a thriller. Philippe\'s 78 anchored the innings and Dwarshuis defended 12 in the last over to seal a famous 7-run win.' }
+      },
+      {
+        id: 2, date: 'Dec 17', home: 'Brisbane Heat', away: 'Adelaide Strikers', venue: 'The Gabba', status: 'done',
+        result: { winner: 'Adelaide Strikers', score1: '148/8 (20ov)', score2: '152/6 (19.2ov)', mom: 'Matt Short', momStats: '67 off 42, 1 wicket', margin: '4 wickets', partnership: '72 (Short-Head)', topBat1: 'Matt Short 67', topBat2: 'Travis Head 48', topBowl1: 'Henry Thornton 3/24', topBowl2: 'Rashid Khan 2/20', topBat1opp: 'Chris Lynn 52', topBat2opp: 'Max Bryant 38', topBowl1opp: 'Xavier Bartlett 3/31', topBowl2opp: 'Mitch Swepson 2/27', extras1: 'Wides: 7, No balls: 3', extras2: 'Wides: 4, No balls: 1', stadium: 'The Gabba, Brisbane', toss: 'Brisbane Heat won toss, elected to bat', result_type: 'Result', summary: 'Adelaide chased down Brisbane\'s total with 4 balls to spare. Short\'s blistering 67 anchored the chase and Rashid Khan was miserly with the ball.' }
+      },
+      {
+        id: 3, date: 'Dec 20', home: 'Perth Scorchers', away: 'Hobart Hurricanes', venue: 'Optus Stadium', status: 'done',
+        result: { winner: 'Perth Scorchers', score1: '189/4 (20ov)', score2: '155/9 (20ov)', mom: 'Josh Inglis', momStats: '91 off 51, 2 stumpings', margin: '34 runs', partnership: '101 (Inglis-Turner)', topBat1: 'Josh Inglis 91', topBat2: 'Ashton Turner 55', topBowl1: 'Andrew Tye 3/27', topBowl2: 'Jhye Richardson 2/32', topBat1opp: 'Ben McDermott 44', topBat2opp: 'Matthew Wade 38', topBowl1opp: 'Riley Meredith 2/38', topBowl2opp: 'Joel Paris 2/41', extras1: 'Wides: 3, No balls: 2', extras2: 'Wides: 8, No balls: 2', stadium: 'Optus Stadium, Perth', toss: 'Perth Scorchers won toss, elected to bat', result_type: 'Result', summary: 'Scorchers crushed Hurricanes by 34 runs. Josh Inglis\'s blazing 91 set up a massive total and Tye\'s 3-wicket haul sealed a comfortable victory.' }
+      },
+      {
+        id: 4, date: 'Dec 22', home: 'Melbourne Renegades', away: 'Sydney Thunder', venue: 'Marvel Stadium', status: 'done',
+        result: { winner: 'Sydney Thunder', score1: '161/7 (20ov)', score2: '164/4 (19.1ov)', mom: 'David Warner', momStats: '82* off 55, Player of the Match', margin: '6 wickets', partnership: '88 (Warner-Billings)', topBat1: 'David Warner 82*', topBat2: 'Sam Billings 48', topBowl1: 'Nathan McAndrew 3/28', topBowl2: 'Daniel Sams 2/33', topBat1opp: 'Aaron Finch 52', topBat2opp: 'Nic Maddinson 44', topBowl1opp: 'Nathan Coulter-Nile 3/29', topBowl2opp: 'Imran Tahir 2/26', extras1: 'Wides: 6, No balls: 2', extras2: 'Wides: 3, No balls: 1', stadium: 'Marvel Stadium, Melbourne', toss: 'Melbourne Renegades won toss, elected to bat', result_type: 'Result', summary: 'Warner\'s unbeaten 82 guided Thunder home with 5 balls to spare. McAndrew\'s 3/28 kept Renegades to 161 before the opening stand of 88 made the chase look comfortable.' }
+      },
+      {
+        id: 5, date: 'Jan 5', home: 'Adelaide Strikers', away: 'Perth Scorchers', venue: 'Adelaide Oval', status: 'live',
+        live: { score1: '142/4 (16.2)', score2: '—', rr: '8.67', req: '65 off 22', bat: 'Travis Head 58*', bowl: 'Andrew Tye 1/28', lastWkt: 'Jake Weatherald 34' }
+      },
+      {
+        id: 6, date: 'Jan 8', home: 'Sydney Thunder', away: 'Brisbane Heat', venue: 'Manuka Oval', status: 'upcoming',
+        squads: { home: { batters: ['David Warner', 'Alex Hales', 'Sam Billings', 'Oliver Davies', 'Matthew Gilkes'], allrounders: ['Daniel Sams', 'Jason Sangha', 'Gurinder Sandhu'], bowlers: ['Nathan McAndrew', 'Chris Tremain', 'Fazalhaq Farooqi'] }, away: { batters: ['Chris Lynn', 'Max Bryant', 'Usman Khawaja', 'Sam Heazlett', 'Matt Renshaw'], allrounders: ['Jimmy Peirson', 'Michael Neser', 'Paul Walter'], bowlers: ['Xavier Bartlett', 'Mitch Swepson', 'Mark Steketee'] } }, prob: { home: 58, away: 42 }
+      },
+      {
+        id: 7, date: 'Jan 12', home: 'Hobart Hurricanes', away: 'Melbourne Renegades', venue: 'Blundstone Arena', status: 'upcoming',
+        squads: { home: { batters: ['Matthew Wade', 'Ben McDermott', 'Caleb Jewell', 'Jordan Cox', 'Macalister Wright'], allrounders: ["D'Arcy Short", 'Tim David', 'Nikhil Chaudhary'], bowlers: ['Riley Meredith', 'Joel Paris', 'Qais Ahmad'] }, away: { batters: ['Aaron Finch', 'Shaun Marsh', 'Nic Maddinson', 'Mackenzie Harvey', 'Jake Fraser-McGurk'], allrounders: ['Tim Seifert', 'Zak Evans', 'Josh Brown'], bowlers: ['Nathan Coulter-Nile', 'Imran Tahir', 'Kane Richardson'] } }, prob: { home: 45, away: 55 }
+      },
+      {
+        id: 8, date: 'Jan 15', home: 'Melbourne Stars', away: 'Sydney Sixers', venue: 'MCG', status: 'upcoming',
+        squads: { home: { batters: ['Glenn Maxwell', 'Joe Clarke', 'Nick Larkin', 'Hilton Cartwright', 'Tom Lammonby'], allrounders: ['Marcus Stoinis', 'Beau Webster', 'Andre Russell'], bowlers: ['Adam Zampa', 'Jackson Bird', 'Brody Couch'] }, away: { batters: ['Josh Philippe', 'James Vince', 'Jack Edwards', 'Jordan Silk', 'Justin Avendano'], allrounders: ['Moises Henriques', 'Carlos Brathwaite', 'Dan Christian'], bowlers: ['Josh Hazlewood', 'Ben Dwarshuis', 'Sean Abbott'] } }, prob: { home: 40, away: 60 }
+      },
+      {
+        id: 9, date: 'Jan 19', home: 'Brisbane Heat', away: 'Perth Scorchers', venue: 'The Gabba', status: 'upcoming',
+        squads: { home: { batters: ['Chris Lynn', 'Max Bryant', 'Usman Khawaja', 'Sam Heazlett', 'Matt Renshaw'], allrounders: ['Jimmy Peirson', 'Michael Neser', 'Paul Walter'], bowlers: ['Xavier Bartlett', 'Mitch Swepson', 'Mark Steketee'] }, away: { batters: ['Josh Inglis', 'Kurtis Patterson', 'Laurie Evans', 'Cameron Bancroft', 'Cooper Connolly'], allrounders: ['Ashton Turner', 'Aaron Hardie', 'Nick Hobson'], bowlers: ['Andrew Tye', 'Jason Behrendorff', 'Jhye Richardson'] } }, prob: { home: 38, away: 62 }
+      },
+      {
+        id: 10, date: 'Jan 24', home: 'Adelaide Strikers', away: 'Hobart Hurricanes', venue: 'Adelaide Oval', status: 'upcoming',
+        squads: { home: { batters: ['Travis Head', 'Jake Weatherald', 'Matt Short', 'Henry Hunt', 'Ian Cockbain'], allrounders: ['Alex Carey', 'Thomas Kelly', 'Jamie Overton'], bowlers: ['Rashid Khan', 'Henry Thornton', 'Wes Agar'] }, away: { batters: ['Matthew Wade', 'Ben McDermott', 'Caleb Jewell', 'Jordan Cox', 'Macalister Wright'], allrounders: ["D'Arcy Short", 'Tim David', 'Nikhil Chaudhary'], bowlers: ['Riley Meredith', 'Qais Ahmad', 'Nathan Ellis'] } }, prob: { home: 52, away: 48 }
+      },
+      { id: 'SF1', date: 'Feb 7', home: 'TBD', away: 'TBD', venue: 'TBD', status: 'upcoming', squads: { home: { batters: [], allrounders: [], bowlers: [] }, away: { batters: [], allrounders: [], bowlers: [] } }, prob: { home: 50, away: 50 } },
+      { id: 'SF2', date: 'Feb 9', home: 'TBD', away: 'TBD', venue: 'TBD', status: 'upcoming', squads: { home: { batters: [], allrounders: [], bowlers: [] }, away: { batters: [], allrounders: [], bowlers: [] } }, prob: { home: 50, away: 50 } },
+      { id: 'GF', date: 'Feb 16', home: 'TBD', away: 'TBD', venue: 'TBD', status: 'upcoming', squads: { home: { batters: [], allrounders: [], bowlers: [] }, away: { batters: [], allrounders: [], bowlers: [] } }, prob: { home: 50, away: 50 } },
+    ];
+
+    // ═══ STATS PAGE DATA ═══
+    const STAT_SECTIONS = [
+      {
+        title: 'Top Run Scorers', type: 'bat', players: [
+          { n: 'Travis Head', team: 'Adelaide Strikers', val: 612, sub: 'SR: 168.4', color: '#00AEEF' },
+          { n: 'Josh Inglis', team: 'Perth Scorchers', val: 589, sub: 'SR: 158.8', color: '#F58020' },
+          { n: 'Matthew Wade', team: 'Hobart Hurricanes', val: 543, sub: 'SR: 148.6', color: '#6A2E89' },
+          { n: 'Chris Lynn', team: 'Brisbane Heat', val: 511, sub: 'SR: 163.0', color: '#00A4A7' },
+          { n: 'Aaron Finch', team: 'Melbourne Renegades', val: 498, sub: 'SR: 149.5', color: '#E31B23' },
+        ]
+      },
+      {
+        title: 'Top Wicket Takers', type: 'bowl', players: [
+          { n: 'Josh Hazlewood', team: 'Sydney Sixers', val: '24 wkts', sub: 'Econ: 7.22', color: '#E6007E' },
+          { n: 'Nathan Coulter-Nile', team: 'Melbourne Renegades', val: '21 wkts', sub: 'Econ: 7.88', color: '#E31B23' },
+          { n: 'Andrew Tye', team: 'Perth Scorchers', val: '20 wkts', sub: 'Econ: 7.88', color: '#F58020' },
+          { n: 'Ben Dwarshuis', team: 'Sydney Sixers', val: '19 wkts', sub: 'Econ: 7.88', color: '#E6007E' },
+          { n: 'Riley Meredith', team: 'Hobart Hurricanes', val: '18 wkts', sub: 'Econ: 8.22', color: '#6A2E89' },
+        ]
+      },
+      {
+        title: 'Best Strike Rates', type: 'bat', players: [
+          { n: "D'Arcy Short", team: 'Hobart Hurricanes', val: '178.4', sub: '498 runs', color: '#6A2E89' },
+          { n: 'Tim David', team: 'Melbourne Renegades', val: '171.2', sub: '295 runs', color: '#E31B23' },
+          { n: 'Sam Billings', team: 'Sydney Thunder', val: '168.9', sub: '412 runs', color: '#BAE100' },
+          { n: 'Glenn Maxwell', team: 'Melbourne Stars', val: '165.3', sub: '478 runs', color: '#009639' },
+          { n: 'Chris Lynn', team: 'Brisbane Heat', val: '163.0', sub: '511 runs', color: '#00A4A7' },
+        ]
+      },
+      {
+        title: 'Best Economy Rates', type: 'bowl', players: [
+          { n: 'Rashid Khan', team: 'Adelaide Strikers', val: '6.21', sub: '18 wkts', color: '#00AEEF' },
+          { n: 'Adam Zampa', team: 'Melbourne Stars', val: '6.84', sub: '17 wkts', color: '#009639' },
+          { n: 'Xavier Bartlett', team: 'Brisbane Heat', val: '7.51', sub: '16 wkts', color: '#00A4A7' },
+          { n: 'Jason Behrendorff', team: 'Perth Scorchers', val: '7.44', sub: '17 wkts', color: '#F58020' },
+          { n: 'Imran Tahir', team: 'Melbourne Renegades', val: '7.55', sub: '14 wkts', color: '#E31B23' },
+        ]
+      },
+      {
+        title: 'Most Sixes', type: 'bat', players: [
+          { n: 'Chris Lynn', team: 'Brisbane Heat', val: 38, sub: '511 runs', color: '#00A4A7' },
+          { n: 'Glenn Maxwell', team: 'Melbourne Stars', val: 34, sub: '478 runs', color: '#009639' },
+          { n: "D'Arcy Short", team: 'Hobart Hurricanes', val: 31, sub: '498 runs', color: '#6A2E89' },
+          { n: 'Travis Head', team: 'Adelaide Strikers', val: 29, sub: '612 runs', color: '#00AEEF' },
+          { n: 'Tim David', team: 'Melbourne Renegades', val: 26, sub: '295 runs', color: '#E31B23' },
+        ]
+      },
+      {
+        title: 'Most Fours', type: 'bat', players: [
+          { n: 'Travis Head', team: 'Adelaide Strikers', val: 62, sub: '612 runs', color: '#00AEEF' },
+          { n: 'Josh Inglis', team: 'Perth Scorchers', val: 58, sub: '589 runs', color: '#F58020' },
+          { n: 'David Warner', team: 'Sydney Thunder', val: 54, sub: '467 runs', color: '#BAE100' },
+          { n: 'Matthew Wade', team: 'Hobart Hurricanes', val: 49, sub: '543 runs', color: '#6A2E89' },
+          { n: 'Sam Billings', team: 'Sydney Thunder', val: 46, sub: '412 runs', color: '#BAE100' },
+        ]
+      },
+      {
+        title: 'Most Catches', type: 'field', players: [
+          { n: 'Glenn Maxwell', team: 'Melbourne Stars', val: 14, sub: 'Outfield', color: '#009639' },
+          { n: 'Moises Henriques', team: 'Sydney Sixers', val: 12, sub: 'Outfield', color: '#E6007E' },
+          { n: 'Ashton Turner', team: 'Perth Scorchers', val: 11, sub: 'Outfield', color: '#F58020' },
+          { n: 'Aaron Finch', team: 'Melbourne Renegades', val: 10, sub: 'Outfield', color: '#E31B23' },
+          { n: 'Matt Short', team: 'Adelaide Strikers', val: 9, sub: 'Outfield', color: '#00AEEF' },
+        ]
+      },
+      {
+        title: 'Most Dismissals (WK)', type: 'field', players: [
+          { n: 'Josh Inglis', team: 'Perth Scorchers', val: 22, sub: '18ct / 4st', color: '#F58020' },
+          { n: 'Matthew Wade', team: 'Hobart Hurricanes', val: 18, sub: '14ct / 4st', color: '#6A2E89' },
+          { n: 'Travis Head', team: 'Adelaide Strikers', val: 16, sub: '13ct / 3st', color: '#00AEEF' },
+          { n: 'Sam Billings', team: 'Sydney Thunder', val: 14, sub: '11ct / 3st', color: '#BAE100' },
+          { n: 'Jimmy Peirson', team: 'Brisbane Heat', val: 12, sub: '10ct / 2st', color: '#00A4A7' },
+        ]
+      },
+      {
+        title: 'Most Player of Match Awards', type: 'award', players: [
+          { n: 'Travis Head', team: 'Adelaide Strikers', val: 4, sub: '612 runs', color: '#00AEEF' },
+          { n: 'Josh Inglis', team: 'Perth Scorchers', val: 3, sub: '589 runs', color: '#F58020' },
+          { n: 'Rashid Khan', team: 'Adelaide Strikers', val: 3, sub: '18 wkts', color: '#00AEEF' },
+          { n: "D'Arcy Short", team: 'Hobart Hurricanes', val: 3, sub: '498 runs', color: '#6A2E89' },
+          { n: 'Josh Hazlewood', team: 'Sydney Sixers', val: 2, sub: '24 wkts', color: '#E6007E' },
+        ]
+      },
+      {
+        title: 'Best Bowling Average', type: 'bowl', players: [
+          { n: 'Rashid Khan', team: 'Adelaide Strikers', val: '17.3', sub: '18 wkts', color: '#00AEEF' },
+          { n: 'Josh Hazlewood', team: 'Sydney Sixers', val: '16.8', sub: '24 wkts', color: '#E6007E' },
+          { n: 'Adam Zampa', team: 'Melbourne Stars', val: '20.2', sub: '17 wkts', color: '#009639' },
+          { n: 'Andrew Tye', team: 'Perth Scorchers', val: '18.9', sub: '20 wkts', color: '#F58020' },
+          { n: 'Jason Behrendorff', team: 'Perth Scorchers', val: '19.5', sub: '17 wkts', color: '#F58020' },
+        ]
+      },
+      {
+        title: 'Most 50+ Scores', type: 'bat', players: [
+          { n: 'Travis Head', team: 'Adelaide Strikers', val: 5, sub: '612 runs', color: '#00AEEF' },
+          { n: 'Josh Inglis', team: 'Perth Scorchers', val: 5, sub: '589 runs', color: '#F58020' },
+          { n: 'Matthew Wade', team: 'Hobart Hurricanes', val: 4, sub: '543 runs', color: '#6A2E89' },
+          { n: 'Glenn Maxwell', team: 'Melbourne Stars', val: 4, sub: '478 runs', color: '#009639' },
+          { n: 'David Warner', team: 'Sydney Thunder', val: 4, sub: '467 runs', color: '#BAE100' },
+        ]
+      },
+      {
+        title: 'Most 4-Wicket Hauls', type: 'bowl', players: [
+          { n: 'Josh Hazlewood', team: 'Sydney Sixers', val: 2, sub: 'Best: 4/22', color: '#E6007E' },
+          { n: 'Andrew Tye', team: 'Perth Scorchers', val: 2, sub: 'Best: 5/27', color: '#F58020' },
+          { n: 'Rashid Khan', team: 'Adelaide Strikers', val: 2, sub: 'Best: 4/18', color: '#00AEEF' },
+          { n: 'Nathan Coulter-Nile', team: 'Melbourne Renegades', val: 1, sub: 'Best: 4/28', color: '#E31B23' },
+          { n: 'Ben Dwarshuis', team: 'Sydney Sixers', val: 1, sub: 'Best: 4/31', color: '#E6007E' },
+        ]
+      },
+      {
+        title: 'Best Batting Average', type: 'bat', players: [
+          { n: 'Travis Head', team: 'Adelaide Strikers', val: '45.8', sub: '612 runs', color: '#00AEEF' },
+          { n: 'Josh Inglis', team: 'Perth Scorchers', val: '43.6', sub: '589 runs', color: '#F58020' },
+          { n: 'Matthew Wade', team: 'Hobart Hurricanes', val: '40.2', sub: '543 runs', color: '#6A2E89' },
+          { n: 'David Warner', team: 'Sydney Thunder', val: '38.9', sub: '467 runs', color: '#BAE100' },
+          { n: "D'Arcy Short", team: 'Hobart Hurricanes', val: '38.3', sub: '498 runs', color: '#6A2E89' },
+        ]
+      },
+      {
+        title: 'Highest Individual Score', type: 'bat', players: [
+          { n: 'Josh Inglis', team: 'Perth Scorchers', val: '94*', sub: 'vs Hurricanes', color: '#F58020' },
+          { n: 'Travis Head', team: 'Adelaide Strikers', val: '98', sub: 'vs Thunder', color: '#00AEEF' },
+          { n: 'Chris Lynn', team: 'Brisbane Heat', val: '101', sub: 'vs Renegades', color: '#00A4A7' },
+          { n: 'Glenn Maxwell', team: 'Melbourne Stars', val: '89', sub: 'vs Sixers', color: '#009639' },
+          { n: 'David Warner', team: 'Sydney Thunder', val: '85', sub: 'vs Renegades', color: '#BAE100' },
+        ]
+      },
+      {
+        title: 'Fastest Deliveries (kph)', type: 'bowl', players: [
+          { n: 'Riley Meredith', team: 'Hobart Hurricanes', val: '154.2', sub: 'Avg: 147.8', color: '#6A2E89' },
+          { n: 'Nathan Coulter-Nile', team: 'Melbourne Renegades', val: '151.8', sub: 'Avg: 143.1', color: '#E31B23' },
+          { n: 'Josh Hazlewood', team: 'Sydney Sixers', val: '149.4', sub: 'Avg: 141.2', color: '#E6007E' },
+          { n: 'Andrew Tye', team: 'Perth Scorchers', val: '148.1', sub: 'Avg: 140.6', color: '#F58020' },
+          { n: 'Xavier Bartlett', team: 'Brisbane Heat', val: '146.9', sub: 'Avg: 139.4', color: '#00A4A7' },
+        ]
+      },
+      {
+        title: 'Most Run Outs', type: 'field', players: [
+          { n: 'Ashton Turner', team: 'Perth Scorchers', val: 4, sub: 'Direct hits: 2', color: '#F58020' },
+          { n: 'Glenn Maxwell', team: 'Melbourne Stars', val: 3, sub: 'Direct hits: 3', color: '#009639' },
+          { n: 'Matt Short', team: 'Adelaide Strikers', val: 3, sub: 'Direct hits: 1', color: '#00AEEF' },
+          { n: 'David Warner', team: 'Sydney Thunder', val: 3, sub: 'Direct hits: 2', color: '#BAE100' },
+          { n: 'Moises Henriques', team: 'Sydney Sixers', val: 2, sub: 'Direct hits: 1', color: '#E6007E' },
+        ]
+      },
+    ];
+
+    // ═══ AUTH ═══
+    const MAX_ATTEMPTS = 3;
+    let failedAttempts = 0, lockoutUntil = 0;
+
+    function getStored() { return JSON.parse(localStorage.getItem('bbl_account') || 'null'); }
+    function saveAccount(e, p, u) { localStorage.setItem('bbl_account', JSON.stringify({ e: e.toLowerCase(), p, u: u || e.split('@')[0] })); }
+    function isGmail(e) { return /^[a-zA-Z0-9._%+\-]+@gmail\.com$/i.test(e); }
+
+    function showError(msg) {
+      const el = document.getElementById('errorMsg');
+      el.style.color = ''; el.style.background = ''; el.style.borderColor = '';
+      el.textContent = msg; el.classList.remove('visible');
+      void el.offsetWidth; el.classList.add('visible');
+    }
+    function showLogin() { document.getElementById('registerSection').style.display = 'none'; document.getElementById('loginSection').style.display = 'block'; document.getElementById('errorMsg').classList.remove('visible'); }
+    function showRegister() { document.getElementById('loginSection').style.display = 'none'; document.getElementById('registerSection').style.display = 'block'; document.getElementById('errorMsg').classList.remove('visible'); }
+
+    function checkStrength(val) {
+      const fill = document.getElementById('strengthFill'), label = document.getElementById('strengthLabel');
+      if (!val) { fill.style.width = '0%'; label.textContent = 'Enter a password'; return; }
+      let s = 0;
+      if (val.length >= 8) s++; if (val.length >= 12) s++; if (/[A-Z]/.test(val)) s++; if (/[0-9]/.test(val)) s++; if (/[^A-Za-z0-9]/.test(val)) s++;
+      const lvls = [{ w: '20%', c: '#ff4d4d', t: 'Very Weak' }, { w: '40%', c: '#ff9800', t: 'Weak' }, { w: '60%', c: '#ffeb3b', t: 'Fair' }, { w: '80%', c: '#8bc34a', t: 'Strong' }, { w: '100%', c: '#CCFF00', t: 'Very Strong' }];
+      const l = lvls[Math.min(s, 4)]; fill.style.width = l.w; fill.style.background = l.c; label.textContent = l.t;
+    }
+
+    function register() {
+      const u = document.getElementById('regUsername').value.trim();
+      const e = document.getElementById('regEmail').value.trim();
+      const p = document.getElementById('regPass').value;
+      const p2 = document.getElementById('regPassConfirm').value;
+      if (!u || !e || !p) { showError('Please fill in all fields.'); return; }
+      if (u.length < 3) { showError('Username must be at least 3 characters.'); return; }
+      if (!isGmail(e)) { showError('Please enter a valid Gmail address (e.g. name@gmail.com).'); return; }
+      if (p.length < 8) { showError('Password must be at least 8 characters.'); return; }
+      if (p !== p2) { showError('Passwords do not match.'); return; }
+      const existing = getStored();
+      if (existing && existing.e === e.toLowerCase()) { showError('This Gmail is already registered. Please sign in.'); showLogin(); return; }
+      saveAccount(e, p, u);
+      document.getElementById('regEmail').value = ''; document.getElementById('regPass').value = ''; document.getElementById('regPassConfirm').value = '';
+      showLogin();
+      const el = document.getElementById('errorMsg');
+      el.style.color = '#CCFF00'; el.style.background = 'rgba(204,255,0,.1)'; el.style.borderColor = 'rgba(204,255,0,.3)';
+      el.textContent = '✅ Account created! Please sign in.'; el.classList.add('visible');
+      setTimeout(() => { el.classList.remove('visible'); }, 3000);
+    }
+
+    function doLogin() {
+      const now = Date.now();
+      if (now < lockoutUntil) { showError(`Too many attempts. Try again in ${Math.ceil((lockoutUntil - now) / 1000)}s.`); return; }
+      const acc = getStored();
+      if (!acc) { showError('No account found. Please register first.'); showRegister(); return; }
+      const e = document.getElementById('loginEmail').value.trim().toLowerCase();
+      const p = document.getElementById('password').value;
+      if (!e || !p) { showError('Please fill in all fields.'); return; }
+      if (!isGmail(e)) { showError('Please enter a valid Gmail address.'); return; }
+      if (e !== acc.e) { showError('Gmail address not found.'); return; }
+      if (p !== acc.p) {
+        failedAttempts++;
+        const left = MAX_ATTEMPTS - failedAttempts;
+        if (failedAttempts >= MAX_ATTEMPTS) { lockoutUntil = Date.now() + 30000; failedAttempts = 0; showError('Too many failed attempts. Locked for 30 seconds.'); }
+        else { showError('Incorrect password.'); document.getElementById('attemptsLeft').textContent = `${left} attempt${left !== 1 ? 's' : ''} remaining.`; }
+        const pw = document.getElementById('password'); pw.classList.add('input-error'); setTimeout(() => pw.classList.remove('input-error'), 1000);
+        return;
+      }
+      failedAttempts = 0; document.getElementById('attemptsLeft').textContent = ''; document.getElementById('errorMsg').classList.remove('visible');
+      if (document.getElementById('remember').checked) localStorage.setItem('bbl_user', e);
+      else sessionStorage.setItem('bbl_user', e);
+      const acc2 = getStored();
+      const name = acc2 && acc2.u ? acc2.u : e.split('@')[0];
+      document.getElementById('welcomeMsg').textContent = `Welcome, ${name}! Loading Fan Portal…`;
+      document.getElementById('successOverlay').classList.add('visible');
+      setTimeout(runSuccessParticles, 100);
+      setTimeout(() => {
+        document.getElementById('successOverlay').classList.remove('visible');
+        document.getElementById('loginPage').classList.remove('active');
+        document.getElementById('loginPage').style.display = 'none';
+        showNavTabs(true); switchTab('home');
+        document.getElementById('logoutBtn').style.display = 'inline-block';
+      }, 1800);
+    }
+
+    function forgotPassword() {
+      const acc = getStored(); if (!acc) { showError('No account found.'); return; }
+      showError(`Hint: your password is ${acc.p.length} characters long and starts with "${acc.p[0]}".`);
+    }
+
+    function logout() {
+      sessionStorage.removeItem('bbl_user'); localStorage.removeItem('bbl_user');
+      document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display = 'none'; });
+      document.getElementById('loginPage').style.display = 'flex'; document.getElementById('loginPage').classList.add('active');
+      showNavTabs(false); document.getElementById('logoutBtn').style.display = 'none';
+      document.getElementById('loginEmail').value = ''; document.getElementById('password').value = '';
+    }
+
+    function showNavTabs(show) {
+      ['tabHome', 'tabSchedule', 'tabStats', 'tabFanzone', 'tabMerchant'].forEach(id => document.getElementById(id).style.display = show ? 'inline-block' : 'none');
+    }
+
+    function switchTab(tab) {
+      const map = { home: 'fanPage', schedule: 'schedulePage', stats: 'statsPage', fanzone: 'fanzonePage', merchant: 'merchantPage' };
+      const tabMap = { home: 'tabHome', schedule: 'tabSchedule', stats: 'tabStats', fanzone: 'tabFanzone', merchant: 'tabMerchant' };
+      document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display = 'none'; });
+      const page = document.getElementById(map[tab]); page.style.display = 'flex'; page.classList.add('active');
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById(tabMap[tab]).classList.add('active');
+      window.scrollTo(0, 0);
+      // Floating cart visibility
+      const fc = document.getElementById('floatingCart');
+      const totalItems = cart.reduce((s, c) => s + c.qty, 0);
+      if (fc) fc.style.display = (tab === 'merchant' && totalItems > 0) ? 'flex' : 'none';
+    }
+
+    function toggleEye(inputId, btn) {
+      const inp = document.getElementById(inputId); const h = inp.type === 'password'; inp.type = h ? 'text' : 'password';
+      btn.querySelector('svg').innerHTML = h ? `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>` :
+        `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+    }
+
+    // ═══ THEME ═══
+    function toggleTheme() {
+      const b = document.body; b.classList.toggle('light-mode');
+      const btn = document.getElementById('themeToggle');
+      btn.textContent = b.classList.contains('light-mode') ? '🌙 Dark' : '☀️ Light';
+    }
+
+    // ═══ TEAM MODAL ═══
+    function openTeamModal(id) {
+      const t = TEAMS[id]; if (!t) return;
+      const c = t.color;
+      document.getElementById('teamModalContent').innerHTML = `
+    <div class="modal-header" style="background:linear-gradient(135deg,${c}25,transparent);">
+      <img src="${t.logo}" alt="${t.name}">
+      <div class="modal-header-text">
+        <h2 style="color:${c}">${t.name}</h2>
+        <p>Founded ${t.founded} · ${t.titles} Title${t.titles !== 1 ? 's' : ''} · ${t.home}</p>
+      </div>
+      <button class="modal-close" onclick="closeTeamModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-stats-grid">
+        <div class="modal-stat-box"><div class="stat-val" style="color:${c}">${t.stats.matches}</div><div class="stat-lbl">Played</div></div>
+        <div class="modal-stat-box"><div class="stat-val" style="color:${c}">${t.stats.wins}</div><div class="stat-lbl">Won</div></div>
+        <div class="modal-stat-box"><div class="stat-val" style="color:${c}">${t.stats.winPct}</div><div class="stat-lbl">Win %</div></div>
+      </div>
+      <div class="modal-section"><h3 style="color:${c}">🏏 Top Run Scorers</h3>${t.topScorers.map((p, i) => `<div class="modal-player-row"><div class="modal-player-rank">${i + 1}</div><div style="width:32px;height:32px;border-radius:50%;background:${c}20;display:flex;align-items:center;justify-content:center;font-size:14px;margin-right:10px;">🏏</div><div class="modal-player-info"><div class="name">${p.n}</div><div class="role">SR: ${p.sr}</div></div><div class="modal-player-val" style="color:${c}">${p.r}</div></div>`).join('')}</div>
+      <div class="modal-section"><h3 style="color:${c}">🎯 Top Wicket Takers</h3>${t.topWickets.map((p, i) => `<div class="modal-player-row"><div class="modal-player-rank">${i + 1}</div><div style="width:32px;height:32px;border-radius:50%;background:${c}20;display:flex;align-items:center;justify-content:center;font-size:14px;margin-right:10px;">🎯</div><div class="modal-player-info"><div class="name">${p.n}</div><div class="role">Econ: ${p.e}</div></div><div class="modal-player-val" style="color:${c}">${p.w} wkts</div></div>`).join('')}</div>
+      <div class="modal-section"><h3 style="color:${c}">👕 Squad</h3>
+        <div style="margin-bottom:10px;"><div style="font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">BATTERS</div><div class="squad-grid">${t.squad.batters.map(p => `<div class="squad-player"><div class="pl-name">${p}</div><div class="pl-role">Batter</div></div>`).join('')}</div></div>
+        <div style="margin-bottom:10px;"><div style="font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">ALL-ROUNDERS</div><div class="squad-grid">${t.squad.allrounders.map(p => `<div class="squad-player"><div class="pl-name">${p}</div><div class="pl-role">All-rounder</div></div>`).join('')}</div></div>
+        <div><div style="font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">BOWLERS</div><div class="squad-grid">${t.squad.bowlers.map(p => `<div class="squad-player"><div class="pl-name">${p}</div><div class="pl-role">Bowler</div></div>`).join('')}</div></div>
+      </div>
+      <div class="modal-section"><h3 style="color:${c}">🏆 Honours</h3><div>${t.honors.map(h => `<span class="honor-tag" style="background:${c}18;color:${c};border:1px solid ${c}40;">${h}</span>`).join('')}</div></div>
+      <div class="modal-section"><h3 style="color:${c}">🏟️ Home Ground</h3><div class="venue-info">${t.home}</div></div>
+    </div>`;
+      document.getElementById('teamModal').classList.add('open'); document.body.style.overflow = 'hidden';
+    }
+    function closeTeamModal(e) { if (e && e.target !== document.getElementById('teamModal')) return; document.getElementById('teamModal').classList.remove('open'); document.body.style.overflow = ''; }
+
+    // ═══ SCHEDULE ═══
+    let currentFilter = 'all', currentTeamFilter = '';
+    function coloredTeam(name) { const c = TEAM_COLORS[name] || '#fff'; return `<span class="team-name-colored" style="color:${c}">${name}</span>`; }
+
+    function buildSchedule() {
+      const tbody = document.getElementById('scheduleBody'); if (!tbody) return;
+      let rows = SCHEDULE;
+      if (currentFilter !== 'all') rows = rows.filter(m => m.status === currentFilter);
+      if (currentTeamFilter) rows = rows.filter(m => m.home === currentTeamFilter || m.away === currentTeamFilter);
+      tbody.innerHTML = rows.map(m => {
+        const badge = m.status === 'done' ? `<span class="badge badge-done">✅ Completed</span>` : m.status === 'live' ? `<span class="badge badge-live">🔴 LIVE</span>` : `<span class="badge badge-upcoming">📅 Upcoming</span>`;
+        return `<tr onclick="openMatchModal(${typeof m.id === 'number' ? m.id : `'${m.id}'`})"><td>${m.id}</td><td>${m.date}</td><td>${coloredTeam(m.home)}</td><td>${coloredTeam(m.away)}</td><td style="color:var(--text-secondary);font-size:12px;">${m.venue}</td><td>${badge}</td></tr>`;
+      }).join('');
+    }
+
+    function filterSchedule(f, btn) {
+      currentFilter = f; currentTeamFilter = '';
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active'); buildSchedule();
+    }
+    function toggleTeamFilter() {
+      const p = document.getElementById('teamFilterPanel');
+      if (p.style.display === 'none') {
+        p.style.display = 'block';
+        const c = document.getElementById('teamFilterBtns');
+        c.innerHTML = `<button class="filter-btn" onclick="setTeamFilter('',this)">All Teams</button>` +
+          Object.keys(TEAM_COLORS).map(t => `<button class="filter-btn" style="color:${TEAM_COLORS[t]};" onclick="setTeamFilter('${t}',this)">${t}</button>`).join('');
+      } else p.style.display = 'none';
+    }
+    function setTeamFilter(team, btn) {
+      currentTeamFilter = team; currentFilter = 'all';
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active'); buildSchedule();
+    }
+
+    // ═══ MATCH MODAL ═══
+    function openMatchModal(matchId) {
+      const m = SCHEDULE.find(x => x.id === matchId || x.id === String(matchId)); if (!m) return;
+      const modal = document.getElementById('matchModalContent');
+      let content = '';
+      if (m.status === 'done') {
+        const r = m.result; const hc = TEAM_COLORS[m.home] || '#fff'; const ac = TEAM_COLORS[m.away] || '#fff'; const wc = TEAM_COLORS[r.winner] || '#CCFF00';
+        content = `
+    <div class="match-modal-header">
+      <h3>Match ${m.id} · ${m.date} · ${m.venue}</h3>
+      <button class="modal-close" onclick="closeMatchModal()" style="width:34px;height:34px;font-size:15px;">✕</button>
+    </div>
+    <div class="match-modal-body">
+      <div class="result-banner" style="background:${wc}15;border:1px solid ${wc}40;">
+        <h4 style="color:${wc}">🏆 ${r.winner} won by ${r.margin}</h4>
+        <p>🌟 Player of the Match: <strong style="color:#fff">${r.mom}</strong> — ${r.momStats}</p>
+      </div>
+      <div class="score-display">
+        <div class="score-team"><div class="tm-name" style="color:${hc}">${m.home}</div><div class="tm-score" style="color:${hc}">${r.score1}</div><div class="tm-overs">Home</div></div>
+        <div class="score-divider">vs</div>
+        <div class="score-team"><div class="tm-name" style="color:${ac}">${m.away}</div><div class="tm-score" style="color:${ac}">${r.score2}</div><div class="tm-overs">Away</div></div>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-box">
+          <h5 style="color:${hc}">${m.home} Batting</h5>
+          <div class="detail-row"><span class="dl">Top Scorer</span><span class="dv">${r.topBat1}</span></div>
+          <div class="detail-row"><span class="dl">2nd Scorer</span><span class="dv">${r.topBat2}</span></div>
+          <div class="detail-row"><span class="dl">Key Stand</span><span class="dv">${r.partnership}</span></div>
+          <div class="detail-row"><span class="dl">Extras</span><span class="dv">${r.extras1}</span></div>
+        </div>
+        <div class="detail-box">
+          <h5 style="color:${ac}">${m.away} Batting</h5>
+          <div class="detail-row"><span class="dl">Top Scorer</span><span class="dv">${r.topBat1opp}</span></div>
+          <div class="detail-row"><span class="dl">2nd Scorer</span><span class="dv">${r.topBat2opp}</span></div>
+          <div class="detail-row"><span class="dl">Extras</span><span class="dv">${r.extras2}</span></div>
+        </div>
+        <div class="detail-box">
+          <h5 style="color:${hc}">${m.home} Bowling</h5>
+          <div class="detail-row"><span class="dl">Best Bowler</span><span class="dv">${r.topBowl1}</span></div>
+          <div class="detail-row"><span class="dl">2nd Bowler</span><span class="dv">${r.topBowl2}</span></div>
+        </div>
+        <div class="detail-box">
+          <h5 style="color:${ac}">${m.away} Bowling</h5>
+          <div class="detail-row"><span class="dl">Best Bowler</span><span class="dv">${r.topBowl1opp}</span></div>
+          <div class="detail-row"><span class="dl">2nd Bowler</span><span class="dv">${r.topBowl2opp}</span></div>
+        </div>
+      </div>
+      <div class="detail-box" style="background:rgba(255,255,255,0.03);border-radius:10px;padding:14px;margin-top:0;">
+        <div class="detail-row"><span class="dl">Stadium</span><span class="dv">${r.stadium}</span></div>
+        <div class="detail-row"><span class="dl">Toss</span><span class="dv">${r.toss}</span></div>
+      </div>
+      <p style="color:rgba(255,255,255,0.55);font-size:12px;line-height:1.65;margin-top:14px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;">${r.summary}</p>
+    </div>`;
+      } else if (m.status === 'live') {
+        const lv = m.live; const hc = TEAM_COLORS[m.home] || '#CCFF00'; const ac = TEAM_COLORS[m.away] || '#fff';
+        content = `
+    <div class="match-modal-header"><h3>🔴 LIVE · Match ${m.id} · ${m.venue}</h3><button class="modal-close" onclick="closeMatchModal()" style="width:34px;height:34px;font-size:15px;">✕</button></div>
+    <div class="match-modal-body">
+      <div class="score-display">
+        <div class="score-team"><div class="tm-name" style="color:${hc}">${m.home}</div><div class="tm-score" style="color:${hc}">${lv.score1}</div><div class="tm-overs">Batting</div></div>
+        <div class="score-divider">vs</div>
+        <div class="score-team"><div class="tm-name" style="color:${ac}">${m.away}</div><div class="tm-score" style="color:rgba(255,255,255,0.28);">Yet to Bat</div></div>
+      </div>
+      <div class="live-stats-row">
+        <div class="live-stat"><div class="val" style="color:#CCFF00;">${lv.rr}</div><div class="lbl">Run Rate</div></div>
+        <div class="live-stat"><div class="val" style="color:#ff6b6b;">${lv.req}</div><div class="lbl">Required</div></div>
+        <div class="live-stat"><div class="val" style="color:#fff;font-size:14px;">${lv.lastWkt}</div><div class="lbl">Last Wkt</div></div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border-radius:9px;padding:12px;font-size:13px;color:rgba(255,255,255,0.7);">
+        <div style="margin-bottom:5px;">🏏 <strong style="color:#fff;">${lv.bat}</strong></div>
+        <div>🎯 <strong style="color:#fff;">${lv.bowl}</strong></div>
+      </div>
+    </div>`;
+      } else {
+        const sq = m.squads || { home: { batters: [], allrounders: [], bowlers: [] }, away: { batters: [], allrounders: [], bowlers: [] } };
+        const pr = m.prob || { home: 50, away: 50 }; const hc = TEAM_COLORS[m.home] || '#CCFF00'; const ac = TEAM_COLORS[m.away] || '#fff';
+        const renderSquad = (s, color) => `
+      <div class="squad-category"><div class="squad-category-label">Batters</div><div class="squad-pills">${(s.batters || []).map(p => `<div class="squad-pill">${p}</div>`).join('')}</div></div>
+      <div class="squad-category"><div class="squad-category-label">All-Rounders</div><div class="squad-pills">${(s.allrounders || []).map(p => `<div class="squad-pill">${p}</div>`).join('')}</div></div>
+      <div class="squad-category"><div class="squad-category-label">Bowlers</div><div class="squad-pills">${(s.bowlers || []).map(p => `<div class="squad-pill">${p}</div>`).join('')}</div></div>`;
+        content = `
+    <div class="match-modal-header"><h3>📅 Match ${m.id} · ${m.date} · ${m.venue}</h3><button class="modal-close" onclick="closeMatchModal()" style="width:34px;height:34px;font-size:15px;">✕</button></div>
+    <div class="match-modal-body">
+      ${m.home === 'TBD' ? '<p style="text-align:center;color:rgba(255,255,255,0.4);padding:20px;">Teams to be determined after earlier rounds.</p>' : `
+      <div class="prob-bar-wrap">
+        <div class="prob-label-row"><span style="color:${hc};font-weight:700;">${m.home}</span><span style="color:var(--text-secondary);">Win Probability</span><span style="color:${ac};font-weight:700;">${m.away}</span></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+          <span style="color:${hc};font-family:'Bebas Neue',sans-serif;font-size:22px;">${pr.home}%</span>
+          <div class="prob-bar" style="flex:1;"><div class="prob-fill" style="width:${pr.home}%;background:linear-gradient(90deg,${hc},${ac})"></div></div>
+          <span style="color:${ac};font-family:'Bebas Neue',sans-serif;font-size:22px;">${pr.away}%</span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px;">
+        <div class="squad-section"><h4 style="color:${hc}">${m.home}</h4>${renderSquad(sq.home, hc)}</div>
+        <div class="squad-section"><h4 style="color:${ac}">${m.away}</h4>${renderSquad(sq.away, ac)}</div>
+      </div>`}
+    </div>`;
+      }
+      modal.innerHTML = content; document.getElementById('matchModal').classList.add('open'); document.body.style.overflow = 'hidden';
+    }
+    function closeMatchModal(e) { if (e && e.target !== document.getElementById('matchModal')) return; document.getElementById('matchModal').classList.remove('open'); document.body.style.overflow = ''; }
+
+    // ═══ POINTS TABLE ═══
+    function buildPointsTable() {
+      const tbl = document.getElementById('pointsTable'); if (!tbl) return;
+      tbl.innerHTML = `<thead><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>L</th><th>NR</th><th>Pts</th><th>NRR</th></tr></thead>
+  <tbody>${POINTS_TABLE.map((t, i) => {
+        const c = TEAM_COLORS[t.team] || '#fff';
+        return `<tr><td style="color:${i < 4 ? '#CCFF00' : 'rgba(255,255,255,0.4)'};">${i + 1}</td><td><div class="pt-team-name"><div class="pt-dot" style="background:${c};box-shadow:0 0 6px ${c}60;"></div><span style="color:${c};font-weight:700;">${t.team}</span></div></td><td>${t.p}</td><td style="color:#CCFF00;">${t.w}</td><td style="color:#ff6b6b;">${t.l}</td><td>${t.nr}</td><td style="font-weight:700;color:${c};">${t.pts}</td><td style="color:${parseFloat(t.nrr) >= 0 ? '#8bc34a' : '#ff6b6b'}">${t.nrr}</td></tr>`;
+      }).join('')}</tbody>`;
+    }
+
+    // ═══ STATS GRID ═══
+    function buildStatsGrid() {
+      const grid = document.getElementById('statsGrid'); if (!grid) return;
+      grid.innerHTML = STAT_SECTIONS.map(sec => `
+    <div class="stat-card">
+      <h3>${sec.title}</h3>
+      ${sec.players.map((p, i) => {
+        const photo = PLAYER_PHOTOS[p.n];
+        const face = photo ? `<img class="player-face" src="${photo}" alt="${p.n}" onerror="this.style.display='none'">` :
+          `<div class="player-face" style="background:${p.color}22;display:flex;align-items:center;justify-content:center;font-size:14px;">🏏</div>`;
+        return `<div class="player-row" onclick="openPlayerBlast('${p.n}','${p.color}')">
+          <div class="player-rank">${i + 1}</div>
+          ${face}
+          <div class="player-info">
+            <div class="player-name">${p.n}</div>
+            <div class="player-team" style="color:${p.color}">${p.team}</div>
+          </div>
+          <div class="player-stat" style="color:${p.color}">${p.val}</div>
+        </div>`;
+      }).join('')}
+    </div>`).join('');
+    }
+
+    // ═══ PLAYER BLAST ═══
+    function openPlayerBlast(name, color) {
+      const d = PLAYER_STATS_DETAIL[name];
+      const photo = PLAYER_PHOTOS[name];
+      const overlay = document.getElementById('playerBlast');
+      const card = document.getElementById('playerBlastCard');
+      card.style.borderColor = color;
+      card.style.boxShadow = `0 0 80px ${color}55,0 20px 60px rgba(0,0,0,0.8)`;
+      // Particles
+      const parts = document.getElementById('blastParticles'); parts.innerHTML = '';
+      for (let i = 0; i < 16; i++) {
+        const p = document.createElement('div'); p.className = 'blast-particle';
+        const angle = Math.random() * 360; const dist = 80 + Math.random() * 120;
+        p.style.cssText = `left:${40 + Math.random() * 20}%;top:${20 + Math.random() * 20}%;background:${color};--dx:${Math.cos(angle * Math.PI / 180) * dist}px;--dy:${Math.sin(angle * Math.PI / 180) * dist}px;animation-delay:${Math.random() * 0.3}s;`;
+        parts.appendChild(p);
+      }
+      let statsHtml = '';
+      if (d) {
+        if (d.runs !== undefined) {
+          statsHtml = `<div class="player-blast-stats" style="grid-template-columns:repeat(3,1fr);">
+        <div class="pb-stat"><div class="pv" style="color:${color}">${d.runs}</div><div class="pl">Runs</div></div>
+        <div class="pb-stat"><div class="pv" style="color:${color}">${d.avg}</div><div class="pl">Average</div></div>
+        <div class="pb-stat"><div class="pv" style="color:${color}">${d.sr}</div><div class="pl">Strike Rate</div></div>
+        <div class="pb-stat"><div class="pv" style="color:${color}">${d.hs}</div><div class="pl">Highest Score</div></div>
+        <div class="pb-stat"><div class="pv" style="color:${color}">${d.fiftys}</div><div class="pl">50s</div></div>
+        <div class="pb-stat"><div class="pv" style="color:${color}">${d.hundreds}</div><div class="pl">100s</div></div>
+        <div class="pb-stat"><div class="pv" style="color:${color}">${d.fours ?? '—'}</div><div class="pl">Fours</div></div>
+        <div class="pb-stat"><div class="pv" style="color:${color}">${d.sixes ?? '—'}</div><div class="pl">Sixes</div></div>
+        <div class="pb-stat"><div class="pv" style="color:${color}">${d.catches ?? '—'}</div><div class="pl">Catches</div></div>
+        <div class="pb-stat"><div class="pv" style="color:${color}">${d.mom ?? 0}</div><div class="pl">Man of Match</div></div>
+        <div class="pb-stat"><div class="pv" style="color:${color}">${d.matches ?? '—'}</div><div class="pl">Matches</div></div>
+        <div class="pb-stat"><div class="pv" style="color:${color}">${d.runs && d.matches ? Math.round(d.runs / d.matches) : '—'}</div><div class="pl">Runs/Match</div></div>
+      </div>`;
+        } else {
+          statsHtml = `<div class="player-blast-stats" style="grid-template-columns:repeat(3,1fr);">
+        <div class="pb-stat"><div class="pv" style="color:${color}">${d.wkts}</div><div class="pl">Wickets</div></div>
+        <div class="pb-stat"><div class="pv" style="color:${color}">${d.econ}</div><div class="pl">Economy</div></div>
+        <div class="pb-stat"><div class="pv" style="color:${color}">${d.avg}</div><div class="pl">Average</div></div>
+        <div class="pb-stat"><div class="pv" style="color:${color}">${d.bb}</div><div class="pl">Best Bowling</div></div>
+        <div class="pb-stat"><div class="pv" style="color:${color}">${d.fours_wkts}</div><div class="pl">4-wkt Hauls</div></div>
+        <div class="pb-stat"><div class="pv" style="color:${color}">${d.sr_bowl ?? '—'}</div><div class="pl">Bowl SR</div></div>
+        <div class="pb-stat"><div class="pv" style="color:${color}">${d.dot_pct ?? '—'}</div><div class="pl">Dot Ball %</div></div>
+        <div class="pb-stat"><div class="pv" style="color:${color}">${d.matches ?? '—'}</div><div class="pl">Matches</div></div>
+        <div class="pb-stat"><div class="pv" style="color:${color}">${d.wkts && d.matches ? (d.wkts / d.matches).toFixed(1) : '—'}</div><div class="pl">Wkts/Match</div></div>
+      </div>`;
+        }
+      }
+      document.getElementById('playerBlastContent').innerHTML = `
+    <div class="player-blast-header">
+      ${photo ? `<img class="player-real-photo" src="${photo}" alt="${name}" style="border-color:${color}" onerror="this.outerHTML='<div class=\'player-real-photo\' style=\'display:flex;align-items:center;justify-content:center;font-size:40px;background:'+encodeURIComponent(color)+'22;border-color:'+encodeURIComponent(color)+'\'>🏏</div>'">` :
+          `<div class="player-real-photo" style="display:flex;align-items:center;justify-content:center;font-size:40px;background:${color}22;border-color:${color};">🏏</div>`}
+      <h2 style="color:${color}">${name}</h2>
+      <p>${d ? d.role + ' · ' + d.team : ''}</p>
+    </div>
+    ${statsHtml}`;
+      overlay.classList.add('open'); document.body.style.overflow = 'hidden';
+    }
+    function closePlayerBlast(e) {
+      if (e && e.target !== document.getElementById('playerBlast')) return;
+      document.getElementById('playerBlast').classList.remove('open'); document.body.style.overflow = '';
+    }
+
+    // ═══ FAN ZONE — POLL (real user votes only — no bot/simulated votes) ═══
+    const POLL_TEAMS = Object.keys(TEAM_COLORS);
+    function buildPoll() {
+      const myVote = localStorage.getItem('bbl_my_vote') || '';
+      // Only count real votes cast in this session/stored
+      const votes = JSON.parse(localStorage.getItem('bbl_poll_votes') || '{}');
+      POLL_TEAMS.forEach(t => { if (!votes[t]) votes[t] = 0; });
+      const total = Object.values(votes).reduce((s, v) => s + v, 0);
+      const container = document.getElementById('pollOptions');
+      container.innerHTML = POLL_TEAMS.map(t => {
+        const c = TEAM_COLORS[t]; const pct = total ? Math.round((votes[t] / total) * 100) : 0;
+        return `<div class="poll-option${myVote ? ' voted' : ''}" onclick="castVote('${t}')" style="${myVote ? '' : 'cursor:pointer;'}">
+      <div class="poll-fill" style="width:${myVote ? pct : 0}%;background:${c};"></div>
+      <span class="poll-label"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${c};margin-right:4px;"></span>${t}${myVote === t ? ' ✓' : ''}</span>
+      <span class="poll-pct" style="color:${c}">${myVote ? pct + '%' : ''}</span>
+    </div>`;
+      }).join('');
+      if (total === 0) {
+        document.getElementById('pollCount').textContent = 'No votes yet — be the first to vote!';
+      } else {
+        const lbl = myVote ? `${total} vote${total !== 1 ? 's' : ''} cast` : `${total} vote${total !== 1 ? 's' : ''} — cast yours!`;
+        document.getElementById('pollCount').textContent = lbl;
+      }
+    }
+    function castVote(team) {
+      if (localStorage.getItem('bbl_my_vote')) return;
+      const votes = JSON.parse(localStorage.getItem('bbl_poll_votes') || '{}');
+      votes[team] = (votes[team] || 0) + 1;
+      localStorage.setItem('bbl_poll_votes', JSON.stringify(votes));
+      localStorage.setItem('bbl_my_vote', team);
+      buildPoll();
+      // Animate the voted option
+      setTimeout(() => {
+        const opts = document.querySelectorAll('.poll-option');
+        opts.forEach(o => { if (o.querySelector('.poll-label')?.textContent?.includes(team)) o.style.transform = 'scale(1.02)'; });
+        setTimeout(() => opts.forEach(o => o.style.transform = ''), 400);
+      }, 50);
+    }
+    function resetPoll() { localStorage.removeItem('bbl_my_vote'); localStorage.removeItem('bbl_poll_votes'); buildPoll(); }
+
+    // ═══ FAN ZONE — ADVANCED PREDICTION LEADERBOARD ═══
+    function buildLbSelect() {
+      const sel = document.getElementById('lbPick');
+      sel.innerHTML = POLL_TEAMS.map(t => `<option value="${t}">${t}</option>`).join('');
+      updateTopScorerDropdown();
+      sel.addEventListener('change', updateTopScorerDropdown);
+    }
+
+    function updateTopScorerDropdown() {
+      const teamName = document.getElementById('lbPick').value;
+      const scorerSel = document.getElementById('lbTopScorer');
+      const prevVal = scorerSel.value;
+      const teamKey = Object.keys(TEAMS).find(k => TEAMS[k].name === teamName);
+      let players = [];
+      if (teamKey) {
+        const squad = TEAMS[teamKey].squad;
+        players = [...(squad.batters || []), ...(squad.allrounders || []), ...(squad.bowlers || [])];
+      }
+      scorerSel.innerHTML = '<option value="">— Top scorer (optional) —</option>' +
+        players.map(p => `<option value="${p}"${p === prevVal ? ' selected' : ''}>${p}</option>`).join('');
+    }
+    function getLb() { return JSON.parse(localStorage.getItem('bbl_lb_v2') || '[]'); }
+    function saveLb(d) { localStorage.setItem('bbl_lb_v2', JSON.stringify(d)); }
+    function submitPrediction() {
+      const name = document.getElementById('lbName').value.trim();
+      const pick = document.getElementById('lbPick').value;
+      const topScore = document.getElementById('lbTopScorer')?.value.trim() || '';
+      const margin = document.getElementById('lbMargin')?.value || 'runs';
+      if (!name) { alert('Enter your name!'); return; }
+      const lb = getLb();
+      const existing = lb.find(e => e.name.toLowerCase() === name.toLowerCase());
+      if (existing) { alert('You already made a prediction! Name must be unique.'); return; }
+      const baseScore = 40 + Math.floor(Math.random() * 35);
+      const bonusTop = topScore ? 10 : 0;
+      const bonusMargin = margin !== 'runs' ? 8 : 5;
+      const pts = baseScore + bonusTop + bonusMargin;
+      lb.push({ name, pick, topScorer: topScore, margin, pts, date: new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) });
+      lb.sort((a, b) => b.pts - a.pts);
+      saveLb(lb); renderLb();
+      document.getElementById('lbName').value = '';
+      if (document.getElementById('lbTopScorer')) document.getElementById('lbTopScorer').value = '';
+    }
+    function renderLb() {
+      const lb = getLb();
+      const medals = ['lb-gold', 'lb-silver', 'lb-bronze'];
+      document.getElementById('lbList').innerHTML = lb.slice(0, 10).map((e, i) => {
+        const c = TEAM_COLORS[e.pick] || '#fff';
+        return `<div class="lb-row">
+      <div class="lb-position ${medals[i] || ''}">${i + 1}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="lb-name" style="margin-bottom:1px;">${e.name}</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.35);">${e.margin} win${e.topScorer ? ' · ' + e.topScorer : ''} · ${e.date}</div>
+      </div>
+      <span class="lb-pick" style="background:${c}22;color:${c};">${e.pick.split(' ').pop()}</span>
+      <div class="lb-pts" style="color:${c}">${e.pts}</div>
+    </div>`;
+      }).join('') || '<p style="color:var(--text-secondary);font-size:13px;text-align:center;padding:16px 0;">No predictions yet. Be the first!</p>';
+    }
+
+    // ═══ YOUTUBE LAZY LOAD ═══
+    function loadYT(container, videoId) {
+      container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" allowfullscreen allow="autoplay; encrypted-media" loading="lazy" style="width:100%;height:100%;border:none;"></iframe>`;
+    }
+
+    // ═══ INIT ═══
+    window.addEventListener('DOMContentLoaded', () => {
+      if (getStored()) showLogin();
+      const saved = localStorage.getItem('bbl_user');
+      if (saved && getStored() && getStored().e === saved) {
+        showNavTabs(true); document.getElementById('loginPage').style.display = 'none'; document.getElementById('loginPage').classList.remove('active');
+        switchTab('home'); document.getElementById('logoutBtn').style.display = 'inline-block';
+      }
+      buildSchedule(); buildPointsTable(); buildStatsGrid(); buildPoll(); buildLbSelect(); renderLb(); buildMerchStore();
+      // Build team filter buttons
+      const tfb = document.getElementById('teamFilterBtns');
+      if (tfb) tfb.innerHTML = `<button class="filter-btn active" onclick="setTeamFilter('',this)">All Teams</button>` + Object.keys(TEAM_COLORS).map(t => `<button class="filter-btn" style="color:${TEAM_COLORS[t]};" onclick="setTeamFilter('${t}',this)">${t}</button>`).join('');
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { closeTeamModal(); closeMatchModal(); closePlayerBlast(); }
+      if (e.key === 'Enter') {
+        if (document.getElementById('loginSection').style.display !== 'none') doLogin();
+        else if (document.getElementById('registerSection').style.display !== 'none') register();
+      }
+    });
+
+    // ═══ FAN QUIZ ═══
+    const ALL_QUIZ_QUESTIONS = [
+      { q: 'Which team has won the most BBL titles?', opts: ['Sydney Sixers', 'Perth Scorchers', 'Adelaide Strikers', 'Melbourne Renegades'], ans: 1 },
+      { q: 'In what year was the Big Bash League founded?', opts: ['2008', '2010', '2011', '2013'], ans: 2 },
+      { q: 'Which ground is home to the Perth Scorchers?', opts: ['The Gabba', 'Optus Stadium', 'Marvel Stadium', 'Adelaide Oval'], ans: 1 },
+      { q: 'Which spinner has the best economy rate in BBL|14?', opts: ['Adam Zampa', 'Mitch Swepson', 'Rashid Khan', 'Steve O\'Keefe'], ans: 2 },
+      { q: 'Who is the leading run scorer in BBL|14?', opts: ['Josh Inglis', 'Glenn Maxwell', 'Travis Head', 'Chris Lynn'], ans: 2 },
+      { q: 'Which BBL team plays home games at the SCG?', opts: ['Sydney Thunder', 'Sydney Sixers', 'Both teams', 'Neither'], ans: 1 },
+      { q: 'How many teams are in the Big Bash League?', opts: ['6', '7', '8', '10'], ans: 2 },
+      { q: 'Which team has the highest BBL NRR this season?', opts: ['Sydney Sixers', 'Adelaide Strikers', 'Perth Scorchers', 'Brisbane Heat'], ans: 2 },
+      { q: 'What color is associated with the Hobart Hurricanes?', opts: ['Orange', 'Purple', 'Teal', 'Green'], ans: 1 },
+      { q: 'Which player scored 101 runs in a single BBL|14 match?', opts: ['Travis Head', 'Chris Lynn', 'Glenn Maxwell', 'Josh Inglis'], ans: 1 },
+      { q: 'Which team plays at Marvel Stadium?', opts: ['Melbourne Stars', 'Melbourne Renegades', 'Hobart Hurricanes', 'Brisbane Heat'], ans: 1 },
+      { q: 'Who is the leading wicket-taker in BBL|14?', opts: ['Andrew Tye', 'Rashid Khan', 'Adam Zampa', 'Josh Hazlewood'], ans: 3 },
+      { q: 'Which BBL team has the nickname "The Scorchers"?', opts: ['Adelaide Strikers', 'Sydney Sixers', 'Perth Scorchers', 'Brisbane Heat'], ans: 2 },
+      { q: 'What is the home ground of the Sydney Thunder?', opts: ['SCG', 'MCG', 'Manuka Oval', 'Adelaide Oval'], ans: 2 },
+      { q: 'Which Adelaide Strikers player is an Afghan leg spinner?', opts: ['Adam Zampa', 'Rashid Khan', 'Qais Ahmad', 'Imran Tahir'], ans: 1 },
+      { q: 'How many overs are in a BBL innings?', opts: ['10', '15', '20', '25'], ans: 2 },
+      { q: 'Which team won BBL|12 in 2023?', opts: ['Brisbane Heat', 'Sydney Sixers', 'Perth Scorchers', 'Adelaide Strikers'], ans: 0 },
+      { q: 'Which Melbourne team wears green?', opts: ['Melbourne Renegades', 'Melbourne Stars', 'Both', 'Neither'], ans: 1 },
+      { q: 'What does NRR stand for in the points table?', opts: ['Net Run Rate', 'National Ranking Result', 'Net Result Rating', 'Normal Run Ratio'], ans: 0 },
+      { q: 'Which Hobart Hurricanes bowler bowls the fastest deliveries?', opts: ['Joel Paris', 'Qais Ahmad', 'Riley Meredith', 'Nathan Ellis'], ans: 2 },
+      { q: 'Glenn Maxwell plays for which BBL team?', opts: ['Brisbane Heat', 'Melbourne Renegades', 'Melbourne Stars', 'Sydney Thunder'], ans: 2 },
+      { q: 'What is the maximum number of overs a bowler can bowl in a BBL match?', opts: ['3', '4', '5', '6'], ans: 1 },
+      { q: 'Which city does the "Heat" franchise represent?', opts: ['Hobart', 'Brisbane', 'Perth', 'Adelaide'], ans: 1 },
+      { q: 'Which BBL team did David Warner join in BBL|14?', opts: ['Sydney Sixers', 'Melbourne Stars', 'Sydney Thunder', 'Brisbane Heat'], ans: 2 },
+      { q: 'How many runs did Travis Head score in BBL|14 — the most this season?', opts: ['589', '612', '543', '478'], ans: 1 },
+      { q: 'Which team plays at Blundstone Arena?', opts: ['Adelaide Strikers', 'Melbourne Stars', 'Hobart Hurricanes', 'Brisbane Heat'], ans: 2 },
+      { q: 'Which BBL team is known as the "Sixers"?', opts: ['Melbourne Stars', 'Sydney Sixers', 'Adelaide Strikers', 'Perth Scorchers'], ans: 1 },
+      { q: 'What is the color associated with the Adelaide Strikers?', opts: ['Orange', 'Green', 'Sky Blue', 'Purple'], ans: 2 },
+      { q: 'Which Sydney Thunder player has an international career batting average of 38.9 in BBL|14?', opts: ['Sam Billings', 'Alex Hales', 'David Warner', 'Oliver Davies'], ans: 2 },
+      { q: 'Which team plays at The Gabba?', opts: ['Melbourne Renegades', 'Hobart Hurricanes', 'Brisbane Heat', 'Sydney Thunder'], ans: 2 },
+    ];
+    let QUIZ_QUESTIONS = [];
+    let quizIdx = 0, quizScoreVal = 0, quizAnswered = false, quizOrder = [];
+    let usedQuestionIndices = [];
+    function pickNewQuestionSet() {
+      // Pick 10 questions that haven't been used recently
+      let available = ALL_QUIZ_QUESTIONS.map((_, i) => i).filter(i => !usedQuestionIndices.includes(i));
+      if (available.length < 10) { usedQuestionIndices = []; available = ALL_QUIZ_QUESTIONS.map((_, i) => i); }
+      // Shuffle available
+      for (let i = available.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[available[i], available[j]] = [available[j], available[i]]; }
+      const selected = available.slice(0, 10);
+      usedQuestionIndices.push(...selected);
+      QUIZ_QUESTIONS = selected.map(i => ALL_QUIZ_QUESTIONS[i]);
+    }
+    function startQuiz() {
+      pickNewQuestionSet();
+      quizOrder = [...Array(QUIZ_QUESTIONS.length).keys()];
+      quizIdx = 0; quizScoreVal = 0; quizAnswered = false;
+      document.getElementById('quizArea').style.display = '';
+      document.getElementById('quizEnd').style.display = 'none';
+      document.getElementById('quizScore').textContent = 0;
+      document.getElementById('quizTotal').textContent = 0;
+      showQuestion();
+    }
+    function showQuestion() {
+      const q = QUIZ_QUESTIONS[quizOrder[quizIdx]];
+      document.getElementById('quizQuestion').textContent = `Q${quizIdx + 1}. ${q.q}`;
+      document.getElementById('quizFeedback').style.display = 'none';
+      document.getElementById('quizNextBtn').style.display = 'none';
+      document.getElementById('quizProgress').style.width = `${(quizIdx / QUIZ_QUESTIONS.length) * 100}%`;
+      document.getElementById('quizTotal').textContent = QUIZ_QUESTIONS.length;
+      quizAnswered = false;
+      const optEl = document.getElementById('quizOptions');
+      optEl.innerHTML = q.opts.map((o, i) => `<button onclick="answerQuiz(${i})" style="background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;text-align:left;transition:all .2s;" onmouseover="if(!this.disabled)this.style.borderColor='#CCFF00'" onmouseout="if(!this.disabled&&!this.dataset.sel)this.style.borderColor='rgba(255,255,255,.1)'">${o}</button>`).join('');
+    }
+    function answerQuiz(i) {
+      if (quizAnswered) return; quizAnswered = true;
+      const q = QUIZ_QUESTIONS[quizOrder[quizIdx]];
+      const btns = document.getElementById('quizOptions').querySelectorAll('button');
+      btns.forEach((b, bi) => { b.disabled = true; if (bi === q.ans) b.style.background = 'rgba(204,255,0,.2)', b.style.borderColor = '#CCFF00'; else if (bi === i) b.style.background = 'rgba(255,77,77,.2)', b.style.borderColor = '#ff4d4d'; });
+      const correct = i === q.ans;
+      if (correct) quizScoreVal++;
+      document.getElementById('quizScore').textContent = quizScoreVal;
+      const fb = document.getElementById('quizFeedback');
+      fb.style.display = '';
+      fb.style.background = correct ? 'rgba(204,255,0,.1)' : 'rgba(255,77,77,.1)';
+      fb.style.border = correct ? '1px solid rgba(204,255,0,.3)' : '1px solid rgba(255,77,77,.3)';
+      fb.style.color = correct ? '#CCFF00' : '#ff6b6b';
+      fb.textContent = correct ? '✅ Correct!' : `❌ Wrong! Answer: ${q.opts[q.ans]}`;
+      if (quizIdx < QUIZ_QUESTIONS.length - 1) document.getElementById('quizNextBtn').style.display = 'inline-block';
+      else setTimeout(endQuiz, 900);
+    }
+    function nextQuestion() { quizIdx++; showQuestion(); }
+    function endQuiz() {
+      document.getElementById('quizArea').style.display = 'none';
+      document.getElementById('quizEnd').style.display = '';
+      document.getElementById('quizProgress').style.width = '100%';
+      const pct = quizScoreVal / QUIZ_QUESTIONS.length;
+      const emojis = ['😅', '😐', '🙂', '😎', '🏆']; const titles = ['Keep Practising!', 'Not Bad!', 'Good Effort!', 'Cricket Nerd!', 'Ultimate BBL Fan!'];
+      const lvl = Math.min(4, Math.floor(pct * 5));
+      document.getElementById('quizEndEmoji').textContent = emojis[lvl];
+      document.getElementById('quizEndTitle').textContent = titles[lvl];
+      document.getElementById('quizEndMsg').textContent = `You scored ${quizScoreVal} out of ${QUIZ_QUESTIONS.length}!`;
+    }
+
+    // ═══ PLAYER GUESS ═══
+    const PLAYER_CLUES = [
+      { name: 'Travis Head', clues: ['I bat at the top of the order for a South Australian team', 'I also play for Australia in all formats', 'I keep wickets sometimes', 'My team\'s color is sky blue', 'I am the leading run scorer in BBL|14 with 612 runs'] },
+      { name: 'Josh Hazlewood', clues: ['I am a fast bowler from New South Wales', 'I play for a team known for their pink color', 'I have taken the most wickets in BBL|14', 'I am also an Australian Test regular', 'My wicket tally is 24 this season'] },
+      { name: 'Glenn Maxwell', clues: ['I\'m known for explosive batting and off-spin', 'My team is based in Melbourne', 'My team color is green', 'I\'m a well-known IPL star', 'I play for the Melbourne Stars'] },
+      { name: 'Rashid Khan', clues: ['I am an international superstar from Afghanistan', 'I bowl leg spin for a blue-themed team', 'I have the best economy rate among spinners this season', 'I play for the Adelaide Strikers', 'My economy rate is 6.21'] },
+    ];
+    let currentPuzzle = null, clueRevealed = 0, guessAttemptCount = 0;
+    function newPlayerPuzzle() {
+      currentPuzzle = PLAYER_CLUES[Math.floor(Math.random() * PLAYER_CLUES.length)];
+      clueRevealed = 1; guessAttemptCount = 0;
+      document.getElementById('playerGuessInput').value = '';
+      document.getElementById('guessFeedback').textContent = '';
+      document.getElementById('guessAttempts').textContent = '';
+      renderClues();
+    }
+    function renderClues() {
+      const box = document.getElementById('clueBox');
+      box.innerHTML = currentPuzzle.clues.slice(0, clueRevealed).map((c, i) => `<div style="background:rgba(255,255,255,.06);border-left:3px solid #CCFF00;border-radius:0 8px 8px 0;padding:8px 14px;font-size:13px;color:rgba(255,255,255,.85);">🔎 Clue ${i + 1}: ${c}</div>`).join('');
+    }
+    function checkPlayerGuess() {
+      if (!currentPuzzle) { newPlayerPuzzle(); return; }
+      const val = document.getElementById('playerGuessInput').value.trim().toLowerCase();
+      if (!val) return;
+      guessAttemptCount++;
+      document.getElementById('guessAttempts').textContent = `Attempts used: ${guessAttemptCount}`;
+      if (val === currentPuzzle.name.toLowerCase() || currentPuzzle.name.toLowerCase().includes(val)) {
+        document.getElementById('guessFeedback').style.color = '#CCFF00';
+        document.getElementById('guessFeedback').textContent = `🎉 Correct! The player was ${currentPuzzle.name}! (${guessAttemptCount} attempt${guessAttemptCount > 1 ? 's' : ''})`;
+        return;
+      }
+      if (clueRevealed < currentPuzzle.clues.length) {
+        clueRevealed++;
+        renderClues();
+        document.getElementById('guessFeedback').style.color = '#ff9800';
+        document.getElementById('guessFeedback').textContent = `❌ Wrong! Here's another clue...`;
+      } else {
+        document.getElementById('guessFeedback').style.color = '#ff4d4d';
+        document.getElementById('guessFeedback').textContent = `😔 Out of clues! The answer was: ${currentPuzzle.name}`;
+      }
+      document.getElementById('playerGuessInput').value = '';
+    }
+
+    // ═══ LIVE REACTIONS ═══
+    const reactionLog = [];
+    function sendReaction(emoji, label) {
+      const feed = document.getElementById('reactionFeed');
+      const entry = { emoji, label, time: new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' }) };
+      reactionLog.unshift(entry);
+      if (reactionLog.length > 20) reactionLog.pop();
+      feed.innerHTML = reactionLog.map(r => `<div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border-radius:8px;padding:6px 10px;font-size:13px;animation:fadeUp .3s ease;">
+        <span style="font-size:20px;">${r.emoji}</span>
+        <span style="color:rgba(255,255,255,.7);font-weight:700;">${r.label}</span>
+        <span style="margin-left:auto;font-size:10px;color:rgba(255,255,255,.25);">${r.time}</span>
+      </div>`).join('');
+    }
+
+    // ═══ MERCHANT / CART ═══
+    const MERCH_ITEMS = [
+      // Adelaide Strikers
+      { id: 1, team: 'Adelaide Strikers', type: 'Jersey', name: 'Strikers Home Jersey', price: 89.99, img: 'https://shop.cricket.com.au/cdn/shop/files/AS91389-BBL-Playing-Tee-Front.jpg?v=1758859937', color: '#00AEEF', desc: 'Official BBL|14 home playing jersey' },
+      { id: 2, team: 'Adelaide Strikers', type: 'Cap', name: 'Strikers Snapback Cap', price: 34.99, img: 'https://shop.cricket.com.au/cdn/shop/files/MNSTR2520_Process_Blue_Black_1_0bcfae22-f5b9-477f-8c53-4b31e44d0d66.jpg?v=1753374762', color: '#00AEEF', desc: 'Embroidered Strikers logo snapback' },
+      { id: 3, team: 'Adelaide Strikers', type: 'Water Bottle', name: 'Strikers Water Bottle', price: 24.99, img: 'https://www.onelittlefootyfan.com.au/pub/media/catalog/product/cache/c009c1a6bbbefe244a29561a91e63350/s/c/screen_shot_2021-11-28_at_5.01.32_pm.png', color: '#00AEEF', desc: '750ml stainless steel insulated bottle' },
+      // Brisbane Heat
+      { id: 4, team: 'Brisbane Heat', type: 'Jersey', name: 'Heat Home Jersey', price: 89.99, img: 'https://kingsgrovesports.com.au/cdn/shop/files/BH4001-447_M_FA24_BBL_PHSFH001_600x.jpg?v=1734063774', color: '#E8521A', desc: 'Official BBL|14 Brisbane Heat jersey' },
+      { id: 5, team: 'Brisbane Heat', type: 'Cap', name: 'Heat Replica Cap', price: 34.99, img: 'https://kingsgrovesports.com.au/cdn/shop/files/MNHET1897_1_2000x.jpg?v=1695877316', color: '#E8521A', desc: 'Classic fit with team colors' },
+      { id: 6, team: 'Brisbane Heat', type: 'Water Bottle', name: 'Heat Water Bottle', price: 24.99, img: 'https://sportfirstherveybay.com.au/cdn/shop/files/bbl-brisbane-heat-can-cooler-sportfirst-hervey-bay-76581.jpg?v=1754251228', color: '#E8521A', desc: '750ml Heat branded drink bottle' },
+      // Hobart Hurricanes
+      { id: 7, team: 'Hobart Hurricanes', type: 'Jersey', name: 'Hurricanes Jersey', price: 89.99, img: 'https://kingsgrovesports.com.au/cdn/shop/files/HH3001-591_M_WBBL_PHSFH001_07f5fa2e-1471-45f7-bb35-5fced35c6a67_1600x.jpg?v=1702537075', color: '#6A2E89', desc: 'Official BBL|14 Hurricanes home jersey' },
+      { id: 8, team: 'Hobart Hurricanes', type: 'Cap', name: 'Hurricanes Replica Cap', price: 34.99, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSedaeaT5mCjznK5qSAG4_b0mP05F8Mx3ngtQ&s', color: '#6A2E89', desc: 'Purple Hurricanes embroidered cap' },
+      { id: 9, team: 'Hobart Hurricanes', type: 'Water Bottle', name: 'Hurricanes Water Bottle', price: 24.99, img: 'https://assets.kogan.com/images/1littlefootyfan/FTY-LE-CABX095HH/1-0be7bcac40-screen_shot_2021-11-28_at_50205_pm.png?auto=webp&bg-color=fff&canvas=260%2C260&fit=bounds&height=260&quality=90&width=260', color: '#6A2E89', desc: '750ml stainless Hurricanes bottle' },
+      // Melbourne Renegades
+      { id: 10, team: 'Melbourne Renegades', type: 'Jersey', name: 'Renegades Jersey', price: 89.99, img: 'https://shop.cricket.com.au/cdn/shop/files/MR98453-WBBL-FNR-Playing-Tee-Front.jpg?v=1762124122&width=533', color: '#E31B23', desc: 'Official BBL|14 Renegades home jersey' },
+      { id: 11, team: 'Melbourne Renegades', type: 'Cap', name: 'Renegades Replica Cap', price: 34.99, img: 'https://kingsgrovesports.com.au/cdn/shop/files/MNREN1897_1_2000x.jpg?v=1695876899', color: '#E31B23', desc: 'Red Renegades logo cap' },
+      { id: 12, team: 'Melbourne Renegades', type: 'Water Bottle', name: 'Renegades Water Bottle', price: 24.99, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsdcBusZ0N2kcBR6lnzCbLsmd5rhrPVpTa-g&s', color: '#E31B23', desc: '750ml Renegades insulated bottle' },
+      // Melbourne Stars
+      { id: 13, team: 'Melbourne Stars', type: 'Jersey', name: 'Stars Home Jersey', price: 89.99, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQtCK_R-gjuf4j4n_EcycCZph9xCbhGmXw4w&s', color: '#009639', desc: 'Official BBL|14 Melbourne Stars jersey' },
+      { id: 14, team: 'Melbourne Stars', type: 'Cap', name: 'Stars Replica Cap', price: 34.99, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTe8BYL9K0J8j3c4bgm_MwfR6-SQ2VxxVHM-w&s', color: '#009639', desc: 'Green Stars embroidered cap' },
+      { id: 15, team: 'Melbourne Stars', type: 'Water Bottle', name: 'Stars Water Bottle', price: 24.99, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDp3yNrujePnTLwnQJipvgcyVnojT4z3LfUA&s', color: '#009639', desc: '750ml Stars branded drink bottle' },
+      // Perth Scorchers
+      { id: 16, team: 'Perth Scorchers', type: 'Jersey', name: 'Scorchers Home Jersey', price: 89.99, img: 'https://cricketcentre.com.au/cdn/shop/files/LWN24PS4001L_fa6c085b-382a-41f6-aba3-e08dd5e9da66.jpg?v=1733208455', color: '#F58020', desc: 'Official BBL|14 Scorchers home jersey' },
+      { id: 17, team: 'Perth Scorchers', type: 'Cap', name: 'Scorchers Fitted Cap', price: 34.99, img: 'https://shop.cricket.com.au/cdn/shop/files/MNSCO2500_Black_1_9b2d7288-5abf-431b-88d0-0b2d23cf83ef.jpg?v=1753374787', color: '#F58020', desc: 'Premium on-field Scorchers style' },
+      { id: 18, team: 'Perth Scorchers', type: 'Water Bottle', name: 'Scorchers Water Bottle', price: 24.99, img: 'https://sportfirstherveybay.com.au/cdn/shop/files/bbl-perth-scorchers-can-cooler-sportfirst-hervey-bay-41625_grande.jpg?v=1754251234', color: '#F58020', desc: '750ml orange Scorchers bottle' },
+      // Sydney Sixers
+      { id: 19, team: 'Sydney Sixers', type: 'Jersey', name: 'Sixers Home Jersey', price: 89.99, img: 'https://shop.cricket.com.au/cdn/shop/files/SS91407-BBL-Playing-Tee-Front.jpg?v=1759456533&width=416', color: '#E6007E', desc: 'Official BBL|14 Sydney Sixers jersey' },
+      { id: 20, team: 'Sydney Sixers', type: 'Cap', name: 'Sixers Replica Cap', price: 34.99, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTb_cQsWn9dhTk92JK2YS75Nyol9lW2JYX6mQ&s', color: '#E6007E', desc: 'Magenta Sixers logo cap' },
+      { id: 21, team: 'Sydney Sixers', type: 'Water Bottle', name: 'Sixers Water Bottle', price: 24.99, img: 'https://hopeworld.com.au/cdn/shop/files/swans750-3_0.75x.png?v=1741969830&width=1080', color: '#E6007E', desc: '750ml Sixers insulated bottle' },
+      // Sydney Thunder
+      { id: 22, team: 'Sydney Thunder', type: 'Jersey', name: 'Thunder Home Jersey', price: 89.99, img: 'https://cricketcentre.com.au/cdn/shop/files/LWN23SY01L_2eb9f2fe-9492-4fa9-9c35-7a4944ecbb50.jpg?v=1729119489', color: '#BAE100', desc: 'Official BBL|14 Sydney Thunder jersey' },
+      { id: 23, team: 'Sydney Thunder', type: 'Cap', name: 'Thunder Replica Cap', price: 34.99, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVbntt7GfefQ0VKPCHiFjezfQSKpWOV-xjbA&s', color: '#BAE100', desc: 'Yellow Thunder logo cap' },
+      { id: 24, team: 'Sydney Thunder', type: 'Water Bottle', name: 'Thunder Water Bottle', price: 24.99, img: 'https://m.media-amazon.com/images/I/61tiKXwUK1L._AC_UF894,1000_QL80_.jpg', color: '#BAE100', desc: '750ml Thunder branded drink bottle' },
+      // All Teams
+      { id: 25, team: 'All Teams', type: 'Bat', name: 'BBL Mini Cricket Bat', price: 49.99, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShyMXRFr2utSEbTwv2k1EPN8JNPM0mbitNYQ&s', emoji: '🏏', color: '#CCFF00', desc: 'Collectible 45cm souvenir bat' },
+      { id: 26, team: 'All Teams', type: 'Ball', name: 'BBL Match Ball', price: 29.99, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSia-9WCD3c47OyQ4uWRgeY3iJC-1-OdVQRnw&s', emoji: '⚾', color: '#CCFF00', desc: 'Official replica BBL match ball' },
+    ];
+
+    let cart = JSON.parse(localStorage.getItem('bbl_cart') || '[]');
+    let currentMerchFilter = 'All';
+
+    function buildMerchStore() {
+      // Build team filter
+      const filterEl = document.getElementById('merchTeamFilter');
+      const teams = ['All', 'All Teams', ...Object.keys(TEAM_COLORS)];
+      filterEl.innerHTML = teams.map(t => `<button class="filter-btn${t === 'All' ? ' active' : ''}" onclick="filterMerch('${t}',this)">${t === 'All' ? 'Show All' : t}</button>`).join('');
+      renderProducts('All');
+      renderCart();
+    }
+
+    function filterMerch(team, btn) {
+      currentMerchFilter = team;
+      document.querySelectorAll('#merchTeamFilter .filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderProducts(team);
+    }
+
+    function renderProducts(filter) {
+      const items = filter === 'All' ? MERCH_ITEMS : MERCH_ITEMS.filter(i => i.team === filter || i.team === 'All Teams');
+      document.getElementById('productsGrid').innerHTML = items.map(item => {
+        const inCart = cart.filter(c => c.id === item.id).reduce((s, c) => s + c.qty, 0);
+        const imgHtml = item.img
+          ? `<div style="width:100%;aspect-ratio:1/1;border-radius:10px;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;">
+               <img src="${item.img}" alt="${item.name}" style="width:100%;height:100%;object-fit:contain;padding:8px;" onerror="this.parentElement.style.background='rgba(255,255,255,0.04)';this.parentElement.innerHTML='<span style=\'font-size:54px;\'>${item.emoji || '👕'}</span>'">
+             </div>`
+          : `<div style="width:100%;aspect-ratio:1/1;border-radius:10px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;font-size:54px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.4));">${item.emoji}</div>`;
+        return `<div style="background:#000;border:2px solid ${item.color}22;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px;backdrop-filter:blur(8px);transition:transform .2s,border-color .2s;cursor:default;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='${item.color}66'" onmouseout="this.style.transform='';this.style.borderColor='${item.color}22'">
+          ${imgHtml}
+          <div>
+            <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:${item.color};margin-bottom:4px;">${item.type} · ${item.team === 'All Teams' ? 'All Teams' : item.team.split(' ').pop()}</div>
+            <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:3px;">${item.name}</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.45);">${item.desc}</div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto;">
+            <span style="font-family:'Bebas Neue';font-size:24px;color:${item.color};">$${item.price.toFixed(2)}</span>
+            <button onclick="addToCart(${item.id})" style="background:${item.color};color:#000;border:none;border-radius:9px;padding:8px 14px;font-weight:700;font-size:12px;cursor:pointer;transition:transform .15s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform=''">
+              ${inCart > 0 ? `+ Add (${inCart})` : '+ Add to Cart'}
+            </button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function addToCart(itemId) {
+      const item = MERCH_ITEMS.find(i => i.id === itemId);
+      if (!item) return;
+      const existing = cart.find(c => c.id === itemId);
+      if (existing) existing.qty++;
+      else cart.push({ id: itemId, name: item.name, price: item.price, emoji: item.emoji, team: item.team, color: item.color, qty: 1 });
+      localStorage.setItem('bbl_cart', JSON.stringify(cart));
+      renderCart();
+      renderProducts(currentMerchFilter);
+      // Mini animation
+      const btn = event.target;
+      btn.style.background = '#fff';
+      setTimeout(() => { btn.style.background = item.color; }, 250);
+    }
+
+    function removeFromCart(itemId) {
+      cart = cart.filter(c => c.id !== itemId);
+      localStorage.setItem('bbl_cart', JSON.stringify(cart));
+      renderCart();
+      renderProducts(currentMerchFilter);
+    }
+
+    function changeQty(itemId, delta) {
+      const item = cart.find(c => c.id === itemId);
+      if (!item) return;
+      item.qty += delta;
+      if (item.qty <= 0) cart = cart.filter(c => c.id !== itemId);
+      localStorage.setItem('bbl_cart', JSON.stringify(cart));
+      renderCart();
+      renderProducts(currentMerchFilter);
+    }
+
+    function clearCart() {
+      if (!cart.length || !confirm('Clear your entire cart?')) return;
+      cart = [];
+      localStorage.setItem('bbl_cart', JSON.stringify(cart));
+      renderCart();
+      renderProducts(currentMerchFilter);
+    }
+
+    function renderCart() {
+      const cartEl = document.getElementById('cartItems');
+      const badge = document.getElementById('cartBadge');
+      const fcBadge = document.getElementById('fcBadge');
+      const floatingCart = document.getElementById('floatingCart');
+      const totalItems = cart.reduce((s, c) => s + c.qty, 0);
+      badge.textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
+      if (fcBadge) fcBadge.textContent = totalItems;
+      // Show floating cart only on merchant page and when items exist
+      const onMerchant = document.getElementById('merchantPage')?.classList.contains('active');
+      if (floatingCart) floatingCart.style.display = (totalItems > 0 && onMerchant) ? 'flex' : 'none';
+      if (!cart.length) {
+        cartEl.innerHTML = '<p style="color:rgba(255,255,255,.35);font-size:13px;text-align:center;padding:20px 0;">Your cart is empty. Add some merch!</p>';
+        document.getElementById('cartSubtotal').textContent = '$0.00';
+        document.getElementById('cartShipping').textContent = '$0.00';
+        document.getElementById('cartTotal').textContent = '$0.00';
+        return;
+      }
+      const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
+      const shipping = subtotal > 0 ? (subtotal >= 100 ? 0 : 9.99) : 0;
+      cartEl.innerHTML = cart.map(c => `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);">
+        <span style="font-size:24px;">${c.emoji}</span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:700;color:#fff;">${c.name}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.4);">${c.team === 'All Teams' ? 'All Teams' : c.team}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <button onclick="changeQty(${c.id},-1)" style="width:24px;height:24px;background:rgba(255,255,255,.1);border:none;border-radius:5px;color:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;">−</button>
+          <span style="font-family:'Bebas Neue';font-size:18px;min-width:20px;text-align:center;">${c.qty}</span>
+          <button onclick="changeQty(${c.id},1)" style="width:24px;height:24px;background:rgba(255,255,255,.1);border:none;border-radius:5px;color:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;">+</button>
+        </div>
+        <span style="font-family:'Bebas Neue';font-size:17px;color:#CCFF00;min-width:58px;text-align:right;">$${(c.price * c.qty).toFixed(2)}</span>
+        <button onclick="removeFromCart(${c.id})" style="background:none;border:none;color:rgba(255,100,100,.5);cursor:pointer;font-size:16px;padding:0 2px;" onmouseover="this.style.color='#ff6b6b'" onmouseout="this.style.color='rgba(255,100,100,.5)'">✕</button>
+      </div>`).join('');
+      document.getElementById('cartSubtotal').textContent = `$${subtotal.toFixed(2)}`;
+      document.getElementById('cartShipping').textContent = shipping === 0 ? 'FREE 🎉' : `$${shipping.toFixed(2)}`;
+      document.getElementById('cartTotal').textContent = `$${(subtotal + shipping).toFixed(2)}`;
+    }
+
+    function openCheckout() {
+      if (!cart.length) { alert('Your cart is empty!'); return; }
+      const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
+      const shipping = subtotal >= 100 ? 0 : 9.99;
+      const total = subtotal + shipping;
+      document.getElementById('checkoutBody').innerHTML = `
+        <h3 style="font-family:'Bebas Neue';font-size:20px;letter-spacing:2px;color:var(--neon);margin-bottom:18px;">Order Summary</h3>
+        ${cart.map(c => `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:13px;">
+          <span style="color:rgba(255,255,255,.8);">${c.emoji} ${c.name} ×${c.qty}</span>
+          <span style="color:#fff;font-weight:700;">$${(c.price * c.qty).toFixed(2)}</span>
+        </div>`).join('')}
+        <div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);">
+          <div style="display:flex;justify-content:space-between;font-size:13px;color:rgba(255,255,255,.5);margin-bottom:6px;"><span>Subtotal</span><span>$${subtotal.toFixed(2)}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;color:rgba(255,255,255,.5);margin-bottom:12px;"><span>Shipping</span><span>${shipping === 0 ? 'FREE' : '$' + shipping.toFixed(2)}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:700;color:#CCFF00;"><span>TOTAL</span><span>$${total.toFixed(2)}</span></div>
+        </div>
+        <h3 style="font-family:'Bebas Neue';font-size:20px;letter-spacing:2px;color:var(--neon);margin:22px 0 14px;">Delivery Details</h3>
+        <div style="display:grid;gap:12px;">
+          <input id="chkName" type="text" placeholder="Full Name" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:10px 14px;color:#fff;font-family:'Lato';font-size:13px;outline:none;width:100%;">
+          <input id="chkEmail" type="email" placeholder="Email Address (Gmail)" oninput="const v=this.value.trim();const errEl=document.getElementById('chkEmailErr');if(v&&!/^[a-zA-Z0-9._%+\-]+@gmail\.com$/i.test(v)){this.style.borderColor='#ff4d4d';errEl.style.display='block';}else{this.style.borderColor='rgba(255,255,255,.14)';errEl.style.display='none';}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:10px 14px;color:#fff;font-family:'Lato';font-size:13px;outline:none;width:100%;">
+          <div id="chkEmailErr" style="display:none;color:#ff4d4d;font-size:11px;margin-top:-6px;">⚠️ Please enter a valid Gmail address (e.g. name@gmail.com)</div>
+          <input id="chkAddr" type="text" placeholder="Delivery Address" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:10px 14px;color:#fff;font-family:'Lato';font-size:13px;outline:none;width:100%;">
+          <input id="chkCity" type="text" placeholder="City / Suburb" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:10px 14px;color:#fff;font-family:'Lato';font-size:13px;outline:none;width:100%;">
+          <div style="display:flex;gap:10px;">
+            <input id="chkState" type="text" placeholder="State" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:10px 14px;color:#fff;font-family:'Lato';font-size:13px;outline:none;">
+            <input id="chkPostcode" type="text" placeholder="Postcode" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:10px 14px;color:#fff;font-family:'Lato';font-size:13px;outline:none;">
+          </div>
+        </div>
+        <h3 style="font-family:'Bebas Neue';font-size:20px;letter-spacing:2px;color:var(--neon);margin:22px 0 14px;">Payment</h3>
+        <div style="display:grid;gap:12px;">
+          <input id="chkCard" type="text" placeholder="Card Number (16 digits)" maxlength="19" oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/(.{4})/g,'$1 ').trim()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:10px 14px;color:#fff;font-family:'Lato';font-size:13px;outline:none;width:100%;letter-spacing:2px;">
+          <div style="display:flex;gap:10px;">
+            <input id="chkExpiry" type="text" placeholder="MM/YY" maxlength="5" oninput="let v=this.value.replace(/\D/g,'');if(v.length>=3)v=v.slice(0,2)+'/'+v.slice(2);this.value=v;const mm=parseInt(v.split('/')[0]);const errEl=document.getElementById('expiryMonthErr');if(v.length>=2&&(mm<1||mm>12)){this.style.borderColor='#ff4d4d';errEl.style.display='block';}else{this.style.borderColor='rgba(255,255,255,.14)';errEl.style.display='none';}" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:10px 14px;color:#fff;font-family:'Lato';font-size:13px;outline:none;">
+            <div id="expiryMonthErr" style="display:none;color:#ff4d4d;font-size:11px;margin-top:4px;width:100%;">⚠️ Enter a valid month (1–12)</div>
+            <input id="chkCvv" type="password" placeholder="CVV" maxlength="3" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:10px 14px;color:#fff;font-family:'Lato';font-size:13px;outline:none;">
+          </div>
+        </div>
+        <button onclick="placeOrder()" style="width:100%;background:#CCFF00;color:#000;border:none;border-radius:12px;padding:14px;font-family:'Bebas Neue';font-size:20px;letter-spacing:3px;cursor:pointer;margin-top:22px;transition:transform .15s,box-shadow .15s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 24px rgba(204,255,0,.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''">PLACE ORDER 🏏</button>
+      `;
+      document.getElementById('checkoutModal').style.display = 'flex';
+    }
+
+    function closeCheckout() { document.getElementById('checkoutModal').style.display = 'none'; }
+
+    function placeOrder() {
+      const name = document.getElementById('chkName').value.trim();
+      const email = document.getElementById('chkEmail').value.trim();
+      const addr = document.getElementById('chkAddr').value.trim();
+      const city = document.getElementById('chkCity').value.trim();
+      const state = document.getElementById('chkState').value.trim();
+      const postcode = document.getElementById('chkPostcode').value.trim();
+      const card = document.getElementById('chkCard').value.replace(/\s/g, '');
+      const expiry = document.getElementById('chkExpiry').value.trim();
+      const cvv = document.getElementById('chkCvv').value.trim();
+      if (!name || !email || !addr || !city || !state || !postcode) { alert('Please fill in all delivery details.'); return; }
+      if (!/^[a-zA-Z0-9._%+\-]+@gmail\.com$/i.test(email)) { alert('Please enter a valid Gmail address (e.g. name@gmail.com).'); return; }
+      if (!card || card.length < 16) { alert('Please enter a valid 16-digit card number.'); return; }
+      if (!expiry || expiry.length < 5) { alert('Please enter a valid expiry date (MM/YY).'); return; }
+      const mm = parseInt(expiry.split('/')[0]);
+      if (mm < 1 || mm > 12) { alert('Please enter a valid month (1–12) in the expiry date.'); return; }
+      if (!cvv || cvv.length < 3) { alert('Please enter a valid CVV.'); return; }
+      closeCheckout();
+      generateBill(name, email, addr, city, state, postcode, card);
+    }
+
+    function generateBill(name, email, addr, city, state, postcode, card) {
+      const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
+      const shipping = subtotal >= 100 ? 0 : 9.99;
+      const total = subtotal + shipping;
+      const gst = total * 0.1;
+      const orderId = 'BBL' + Date.now().toString().slice(-8).toUpperCase();
+      const date = new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
+      const maskedCard = '**** **** **** ' + card.slice(-4);
+      document.getElementById('billContent').innerHTML = `
+        <div style="text-align:center;margin-bottom:24px;padding-bottom:20px;border-bottom:2px solid #003366;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:#003366;letter-spacing:4px;">BIG BASH LEAGUE</div>
+          <div style="font-size:12px;color:#888;letter-spacing:2px;text-transform:uppercase;">Official Merchandise Store</div>
+          <div style="margin-top:10px;display:inline-block;background:#CCFF00;color:#000;padding:4px 14px;border-radius:20px;font-weight:700;font-size:12px;">ORDER CONFIRMED ✓</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;font-size:13px;">
+          <div><div style="color:#888;font-size:11px;text-transform:uppercase;margin-bottom:3px;">Order ID</div><div style="font-weight:700;">${orderId}</div></div>
+          <div><div style="color:#888;font-size:11px;text-transform:uppercase;margin-bottom:3px;">Date</div><div style="font-weight:700;">${date}</div></div>
+          <div><div style="color:#888;font-size:11px;text-transform:uppercase;margin-bottom:3px;">Name</div><div style="font-weight:700;">${name}</div></div>
+          <div><div style="color:#888;font-size:11px;text-transform:uppercase;margin-bottom:3px;">Email</div><div style="font-weight:700;">${email}</div></div>
+          <div style="grid-column:1/-1;"><div style="color:#888;font-size:11px;text-transform:uppercase;margin-bottom:3px;">Delivery Address</div><div style="font-weight:700;">${addr}, ${city} ${state} ${postcode}</div></div>
+        </div>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:13px;">
+          <thead>
+            <tr style="background:#003366;color:#CCFF00;">
+              <th style="padding:10px 12px;text-align:left;font-family:'Bebas Neue';letter-spacing:1px;">ITEM</th>
+              <th style="padding:10px 12px;text-align:center;font-family:'Bebas Neue';letter-spacing:1px;">QTY</th>
+              <th style="padding:10px 12px;text-align:right;font-family:'Bebas Neue';letter-spacing:1px;">UNIT</th>
+              <th style="padding:10px 12px;text-align:right;font-family:'Bebas Neue';letter-spacing:1px;">TOTAL</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${cart.map((c, i) => `<tr style="background:${i % 2 === 0 ? '#f9f9f9' : '#fff'};">
+              <td style="padding:9px 12px;color:#000;">${c.emoji} ${c.name}<br><span style="color:#888;font-size:11px;">${c.team}</span></td>
+              <td style="padding:9px 12px;text-align:center;color:#000;">${c.qty}</td>
+              <td style="padding:9px 12px;text-align:right;color:#000;">$${c.price.toFixed(2)}</td>
+              <td style="padding:9px 12px;text-align:right;font-weight:700;color:#000;">$${(c.price * c.qty).toFixed(2)}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;font-size:13px;margin-bottom:20px;">
+          <div style="display:flex;gap:20px;"><span style="color:#888;">Subtotal (excl. GST)</span><span style="font-weight:700;">$${(subtotal / 1.1).toFixed(2)}</span></div>
+          <div style="display:flex;gap:20px;"><span style="color:#888;">GST (10%)</span><span style="font-weight:700;">$${(gst / 1.1).toFixed(2)}</span></div>
+          <div style="display:flex;gap:20px;"><span style="color:#888;">Shipping</span><span style="font-weight:700;">${shipping === 0 ? 'FREE' : '$' + shipping.toFixed(2)}</span></div>
+          <div style="display:flex;gap:20px;border-top:2px solid #003366;padding-top:8px;margin-top:4px;"><span style="font-size:16px;font-weight:700;color:#003366;">TOTAL (AUD)</span><span style="font-size:16px;font-weight:700;color:#003366;">$${total.toFixed(2)}</span></div>
+        </div>
+        <div style="background:#f0f4ff;border-radius:10px;padding:14px;font-size:12px;color:#555;margin-bottom:16px;">
+          <strong style="color:#003366;">Payment Method:</strong> Visa/Mastercard ${maskedCard}<br>
+          <strong style="color:#003366;">Estimated Delivery:</strong> 5–7 business days to ${city}, ${state}<br>
+          <strong style="color:#003366;">Confirmation sent to:</strong> ${email}
+        </div>
+        <div style="text-align:center;font-size:11px;color:#aaa;border-top:1px solid #eee;padding-top:14px;">
+          Thank you for supporting the Big Bash League! 🏏<br>This is a demo receipt — no real transaction occurred.
+        </div>
+      `;
+      document.getElementById('billModal').style.display = 'flex';
+      cart = [];
+      localStorage.setItem('bbl_cart', JSON.stringify(cart));
+      renderCart();
+      renderProducts(currentMerchFilter);
+    }
+
+    function closeBill() { document.getElementById('billModal').style.display = 'none'; }
+    function printBill() { window.print(); }
+
+    // ═══ INIT ADDITIONS ═══
+    // Start quiz when fanzone tab is opened
+    document.addEventListener('DOMContentLoaded', () => {
+      startQuiz();
+      newPlayerPuzzle();
+    });
+  </script>
+</body>
+
+</html>
